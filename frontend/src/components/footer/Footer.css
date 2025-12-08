@@ -1,0 +1,139 @@
+.footer-section {
+  background-color: #1f2937; /* bg-gray-900 */
+  border-top: 1px solid #374151; /* border-t border-gray-800 */
+  padding: 3rem 0; /* py-12 */
+  color: white;
+}
+
+.footer-container {
+  max-width: 1280px; /* container */
+  margin: 0 auto;
+  padding: 0 1rem; /* px-4 */
+}
+
+.footer-grid {
+  display: grid;
+  gap: 2rem; /* gap-8 */
+}
+
+@media(min-width: 768px) {
+  .footer-grid {
+    grid-template-columns: repeat(3, 1fr); /* md:grid-cols-3 */
+  }
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-logo-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #14b8a6; /* text-teal-400 */
+}
+
+.footer-logo-text {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.footer-description {
+  color: #9ca3af; /* text-gray-400 */
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.footer-social-link {
+  color: #9ca3af;
+  transition: color 0.2s;
+}
+
+.footer-social-link:hover {
+  color: white;
+}
+
+.footer-links h3,
+.footer-newsletter h3 {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600; /* font-semibold */
+  margin-bottom: 1rem;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* space-y-2 */
+}
+
+.footer-links a {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: white;
+}
+
+.footer-newsletter p {
+  color: #9ca3af;
+  margin-bottom: 1rem;
+}
+
+.footer-form {
+  display: flex;
+}
+
+.footer-form input {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  background-color: #111827; /* bg-gray-800 */
+  color: white;
+  border: none;
+  border-top-left-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  outline: none;
+}
+
+.footer-form input:focus {
+  box-shadow: 0 0 0 2px #14b8a6; /* focus:ring-2 focus:ring-teal-500 */
+}
+
+.footer-form button {
+  padding: 0.5rem 1rem;
+  background-color: #14b8a6; /* bg-teal-500 */
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.footer-form button:hover {
+  background-color: #0d9488; /* hover:bg-teal-600 */
+}
+
+.footer-bottom {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #374151; /* border-t border-gray-800 */
+  text-align: center;
+  color: #6b7280; /* text-gray-500 */
+}
