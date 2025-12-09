@@ -1,5 +1,5 @@
 import './Hero.css';
-import logo from "../../assets/logo.png"
+import logo from "../../assets/logo.png";
 
 const Hero = () => {
   return (
@@ -16,13 +16,17 @@ const Hero = () => {
             <h1>
               Secure, Fast, and Transparent Online Voting
             </h1>
+
             <p>
-              Our Online Voting System ensures safe and reliable elections with easy access for all voters. Experience modern, AI-powered voting technology.
+              Our Online Voting System ensures safe and reliable elections with easy access for all voters. 
+              Experience modern, AI-powered voting technology.
             </p>
+
             <div className="hero-buttons">
               <button>Start Voting Now</button>
               <button>Learn More</button>
             </div>
+
           </div>
         </div>
       </div>
