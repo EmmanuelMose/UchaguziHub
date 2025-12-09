@@ -1,11 +1,12 @@
 import './Hero.css';
+import logo from "../../assets/logo.png"
 
 const Hero = () => {
   return (
     <section className="hero">
       <div className="hero-bg">
         <img
-          src="https://storage.googleapis.com/dala-prod-public-storage/generated-images/e3764065-0ee5-449e-afcc-9f33afedc11e/circle-shield-hero-rdjj3je-1764606146008.webp"
+          src={logo}
           alt="Online Voting Hero"
         />
       </div>
