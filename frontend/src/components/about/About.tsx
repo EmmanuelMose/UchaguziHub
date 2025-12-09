@@ -1,5 +1,6 @@
 import { Users, Target, Eye } from 'lucide-react';
 import './About.css';
+import logo from "../../assets/logo.png"
 
 const aboutFeatures = [
   {
@@ -46,7 +47,7 @@ const About = () => {
           <div className="about-image-wrapper">
             <div className="about-image-container">
               <img
-                src="https://images.unsplash.com/photo-1598257005567-bf2f7a4edbff?q=80&w=2071&auto=format&fit=crop"
+                src={logo}
                 alt="Voting System"
                 className="about-image"
               />
