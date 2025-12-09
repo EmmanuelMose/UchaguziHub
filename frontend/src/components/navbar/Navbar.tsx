@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import { Shield, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import './Header.css';
-
+import logo from "../../assets/logo.png"; //  Import your logo
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,8 +17,10 @@ const Header = () => {
   return (
     <header className="header">
       <div className="header-container">
+
+        {/* ✅ Logo inserted here */}
         <Link to="/" className="logo">
-          <Shield className="logo-icon" />
+          <img src={logo} alt="UchaguziHub Logo" className="header-logo" />
           <span className="logo-text">UchaguziHub</span>
         </Link>
 
@@ -33,11 +35,13 @@ const Header = () => {
           <button className="signup-btn">Sign Up</button>
         </div>
 
+        {/* Mobile toggle */}
         <div className="mobile-menu-toggle">
           <button onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+
       </div>
 
       {isOpen && (
@@ -47,6 +51,7 @@ const Header = () => {
               {link.label}
             </a>
           ))}
+
           <div className="mobile-auth-buttons">
             <button className="login-btn">Log In</button>
             <button className="signup-btn">Sign Up</button>
