@@ -7,10 +7,10 @@ function App() {
     {
       path: "/",
       element: <LandingPage />,
-      errorElement: <Error />, // Handles route errors for "/"
+      errorElement: <Error />, 
     },
     {
-      path: "*", // Catch-all for non-existing routes
+      path: "*", 
       element: <Error />,
     },
   ]);
