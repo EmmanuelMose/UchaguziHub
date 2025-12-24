@@ -11,6 +11,7 @@ const generateCode = () =>
   Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
 
 export const registerService = async (email: string, password: string) => {
+  // Check if system user exists and is active
   const systemUser = await db.query.systemUsers.findFirst({
     where: eq(systemUsers.email, email),
   });
@@ -19,18 +20,38 @@ export const registerService = async (email: string, password: string) => {
     throw new Error("You are not authorized to register");
   }
 
+  // Check if user already exists
   const existingUser = await db.query.users.findFirst({
     where: eq(users.email, email),
   });
 
-  if (existingUser) {
-    throw new Error("User already registered");
-  }
-
   const verificationCode = generateCode();
   const passwordHash = await bcrypt.hash(password, 10);
 
-  // Save user with verification code
+  if (existingUser) {
+    if (existingUser.isVerified) {
+      // Already verified -> cannot register again
+      throw new Error("User already registered");
+    } else {
+      // Exists but not verified -> update password & verification code
+      await db
+        .update(users)
+        .set({ passwordHash, verificationCode })
+        .where(eq(users.userId, existingUser.userId));
+
+      // Resend verification email
+      await sendEmail(
+        email,
+        "Account Verification - VoteSecure",
+        `Your new verification code is ${verificationCode}`,
+        `<h2>Account Verification</h2><p>Your verification code is: <b>${verificationCode}</b></p>`
+      );
+
+      return true;
+    }
+  }
+
+  // If user does not exist -> create new
   await db.insert(users).values({
     systemUserId: systemUser.systemUserId,
     email,
@@ -40,7 +61,7 @@ export const registerService = async (email: string, password: string) => {
     isVerified: false,
   });
 
-  // Send email
+  // Send verification email
   await sendEmail(
     email,
     "Account Verification - VoteSecure",
