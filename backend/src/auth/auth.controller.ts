@@ -1,14 +1,10 @@
 import { Request, Response } from "express";
-import {
-  registerService,
-  verifyService,
-  loginService,
-} from "./auth.service";
+import { registerService, verifyService, loginService } from "./auth.service";
 
 export const registerUserController = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
-    await registerService(email, password);
+    const { fullName, email, registrationNumber, password } = req.body;
+    await registerService(fullName, email, registrationNumber, password);
     res.json({ success: true, message: "Verification code sent to your email" });
   } catch (error: any) {
     res.status(400).json({ success: false, message: error.message });

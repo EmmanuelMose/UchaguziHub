@@ -24,6 +24,8 @@ export const users = pgTable("users", {
   systemUserId: uuid("system_user_id")
     .references(() => systemUsers.systemUserId, { onDelete: "cascade" })
     .notNull(),
+  fullName: varchar("full_name", { length: 150 }).notNull(), // ✅ add this
+  registrationNumber: varchar("registration_number", { length: 50 }), // ✅ add this
   email: varchar("email", { length: 150 }).notNull().unique(),
   role: varchar("role", { length: 30 }).notNull(),
   passwordHash: text("password_hash").notNull(),
@@ -31,7 +33,6 @@ export const users = pgTable("users", {
   isVerified: boolean("is_verified").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull()
 });
-
 export const elections = pgTable("elections", {
   electionId: uuid("election_id").defaultRandom().primaryKey(),
   title: varchar("title", { length: 200 }).notNull(),

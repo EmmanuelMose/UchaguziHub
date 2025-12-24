@@ -10,8 +10,12 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 const generateCode = () =>
   Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
 
-export const registerService = async (email: string, password: string) => {
-  // Check if system user exists and is active
+export const registerService = async (
+  fullName: string,
+  email: string,
+  registrationNumber: string,
+  password: string
+) => {
   const systemUser = await db.query.systemUsers.findFirst({
     where: eq(systemUsers.email, email),
   });
@@ -20,7 +24,6 @@ export const registerService = async (email: string, password: string) => {
     throw new Error("You are not authorized to register");
   }
 
-  // Check if user already exists
   const existingUser = await db.query.users.findFirst({
     where: eq(users.email, email),
   });
@@ -30,16 +33,13 @@ export const registerService = async (email: string, password: string) => {
 
   if (existingUser) {
     if (existingUser.isVerified) {
-      // Already verified -> cannot register again
       throw new Error("User already registered");
     } else {
-      // Exists but not verified -> update password & verification code
-      await db
-        .update(users)
+      // Update password and resend code
+      await db.update(users)
         .set({ passwordHash, verificationCode })
         .where(eq(users.userId, existingUser.userId));
 
-      // Resend verification email
       await sendEmail(
         email,
         "Account Verification - VoteSecure",
@@ -51,9 +51,10 @@ export const registerService = async (email: string, password: string) => {
     }
   }
 
-  // If user does not exist -> create new
+  // Insert new user
   await db.insert(users).values({
     systemUserId: systemUser.systemUserId,
+    fullName,
     email,
     role: systemUser.role,
     passwordHash,
@@ -61,7 +62,6 @@ export const registerService = async (email: string, password: string) => {
     isVerified: false,
   });
 
-  // Send verification email
   await sendEmail(
     email,
     "Account Verification - VoteSecure",
@@ -81,8 +81,7 @@ export const verifyService = async (email: string, code: string) => {
     throw new Error("Invalid verification code");
   }
 
-  await db
-    .update(users)
+  await db.update(users)
     .set({ isVerified: true, verificationCode: null })
     .where(eq(users.userId, user.userId));
 
