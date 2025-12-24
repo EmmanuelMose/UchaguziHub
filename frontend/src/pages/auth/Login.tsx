@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import { ApiDomain } from "../../utils/APIDomain";
 
 type LoginFormData = {
   email: string;
@@ -11,56 +12,100 @@ type LoginFormData = {
 const Login = () => {
   const navigate = useNavigate();
   const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormData>();
 
   const onSubmit = async (data: LoginFormData) => {
+    setLoading(true);
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, data);
+      const res = await axios.post(`${ApiDomain}/api/auth/login`, data);
 
       if (res.data.success) {
-        const role = res.data.role;
-        // Redirect based on role
-        if (role === "Admin") navigate("/admin-dashboard");
-        else if (role === "User") navigate("/user-dashboard");
-        else if (role === "Election Officer") navigate("/officer-dashboard");
-        else navigate("/dashboard");
+        if (res.data.role === "Admin") navigate("/admin-dashboard");
+        else if (res.data.role === "ElectoralOfficer") navigate("/officer-dashboard");
+        else navigate("/user-dashboard");
       } else {
         setServerError(res.data.message);
       }
     } catch (error: any) {
       setServerError(error.response?.data?.message || "Server error");
     }
+    setLoading(false);
   };
 
   return (
-    <div className="form-container">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            {...register("email", {
-              required: "Email is required",
-              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email" },
-            })}
-          />
-          {errors.email && <p className="error">{errors.email.message}</p>}
+    <div className="min-h-screen flex items-center justify-center bg-blue-50">
+      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md animate-fade-in">
+        <h2 className="text-2xl font-bold text-center text-blue-800 mb-6">Login</h2>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <label className="block mb-1 text-blue-700 font-semibold">Email</label>
+            <input
+              type="email"
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Invalid email address",
+                },
+              })}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+          </div>
+
+          <div>
+            <label className="block mb-1 text-blue-700 font-semibold">Password</label>
+            <input
+              type="password"
+              {...register("password", { required: "Password is required" })}
+              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+          </div>
+
+          {serverError && <p className="text-red-500 text-center">{serverError}</p>}
+
+          <button
+            type="submit"
+            className={`w-full py-2 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 transition-all ${
+              loading ? "cursor-not-allowed" : ""
+            }`}
+            disabled={loading}
+          >
+            {loading ? "Verifying..." : "Login"}
+          </button>
+        </form>
+
+        <div className="mt-4 text-center text-sm">
+          <p>
+            Forgot your password?{" "}
+            <span
+              onClick={() => navigate("/forgot-password")}
+              className="text-blue-600 hover:text-blue-800 cursor-pointer transition-colors"
+            >
+              Click here
+            </span>
+          </p>
+          <p className="mt-2">
+            Don't have an account?{" "}
+            <span
+              onClick={() => navigate("/register")}
+              className="text-blue-600 hover:text-blue-800 cursor-pointer transition-colors"
+            >
+              Register
+            </span>
+          </p>
+          <p className="mt-2">
+            <span
+              onClick={() => navigate("/")}
+              className="text-black hover:text-blue-600 cursor-pointer transition-colors"
+            >
+              Back to Home
+            </span>
+          </p>
         </div>
-
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            {...register("password", { required: "Password is required" })}
-          />
-          {errors.password && <p className="error">{errors.password.message}</p>}
-        </div>
-
-        {serverError && <p className="error">{serverError}</p>}
-
-        <button type="submit">Login</button>
-      </form>
+      </div>
     </div>
   );
 };
