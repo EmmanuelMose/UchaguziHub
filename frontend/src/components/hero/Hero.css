@@ -1,6 +1,6 @@
 .hero {
   position: relative;
-  background-color: #1f2937; /* bg-gray-900 */
+  background-color: #000000;
   color: white;
 }
 
@@ -13,6 +13,12 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0.2;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.hero-bg img:hover {
+  transform: scale(1.05);
   opacity: 0.3;
 }
 
@@ -29,35 +35,48 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  animation: fade-in 1s ease;
 }
 
 .hero-text {
   text-align: center;
-  max-width: 48rem; /* ~3xl */
+  max-width: 48rem;
 }
 
 .hero-text h1 {
-  font-size: 2.25rem; /* text-4xl */
-  font-weight: 800; /* font-extrabold */
+  font-size: 2.25rem;
+  font-weight: 800;
   line-height: 1.2;
   margin-bottom: 1rem;
+  color: #0ea5e9;
+  transition: color 0.3s, transform 0.3s;
+}
+
+.hero-text h1:hover {
+  color: #0284c7;
+  transform: scale(1.05);
 }
 
 @media (min-width: 768px) {
   .hero-text h1 {
-    font-size: 3.75rem; /* md:text-6xl */
+    font-size: 3.75rem;
   }
 }
 
 .hero-text p {
-  font-size: 1.125rem; /* text-lg */
-  color: #d1d5db; /* text-gray-300 */
+  font-size: 1.125rem;
+  color: #d1d5db;
   margin-bottom: 2rem;
+  transition: color 0.3s;
+}
+
+.hero-text p:hover {
+  color: #ffffff;
 }
 
 @media (min-width: 768px) {
   .hero-text p {
-    font-size: 1.25rem; /* md:text-xl */
+    font-size: 1.25rem;
   }
 }
 
@@ -75,31 +94,38 @@
 }
 
 .hero-buttons button {
-  font-size: 1.125rem; /* text-lg */
+  font-size: 1.125rem;
   font-weight: bold;
   padding: 0.75rem 2rem;
   border-radius: 0.5rem;
   border: none;
   cursor: pointer;
-  transition: transform 0.2s, background-color 0.2s;
+  transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
 }
 
 .hero-buttons button:first-child {
-  background-color: #14b8a6; /* bg-teal-500 */
+  background-color: #0ea5e9;
   color: white;
 }
 
 .hero-buttons button:first-child:hover {
-  background-color: #0d9488; /* hover:bg-teal-600 */
+  background-color: #0284c7;
   transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(14,165,233,0.4);
 }
 
 .hero-buttons button:last-child {
-  background-color: #374151; /* bg-gray-700 */
+  background-color: #1e3a8a;
   color: white;
 }
 
 .hero-buttons button:last-child:hover {
-  background-color: #4b5563; /* hover:bg-gray-600 */
+  background-color: #0c2d74;
   transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(14,165,233,0.3);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
