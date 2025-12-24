@@ -1,4 +1,4 @@
-import  db  from "../Drizzle/db";
+import db from "../Drizzle/db";
 import { users, systemUsers } from "../Drizzle/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
@@ -8,11 +8,11 @@ import { sendEmail } from "../mailer/mailer";
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 const generateCode = () =>
-  Math.floor(100000 + Math.random() * 900000).toString();
+  Math.floor(100000 + Math.random() * 900000).toString(); // 6-digit code
 
 export const registerService = async (email: string, password: string) => {
   const systemUser = await db.query.systemUsers.findFirst({
-    where: eq(systemUsers.email, email)
+    where: eq(systemUsers.email, email),
   });
 
   if (!systemUser || !systemUser.isActive) {
@@ -20,7 +20,7 @@ export const registerService = async (email: string, password: string) => {
   }
 
   const existingUser = await db.query.users.findFirst({
-    where: eq(users.email, email)
+    where: eq(users.email, email),
   });
 
   if (existingUser) {
@@ -30,20 +30,22 @@ export const registerService = async (email: string, password: string) => {
   const verificationCode = generateCode();
   const passwordHash = await bcrypt.hash(password, 10);
 
+  // Save user with verification code
   await db.insert(users).values({
     systemUserId: systemUser.systemUserId,
     email,
     role: systemUser.role,
     passwordHash,
     verificationCode,
-    isVerified: false
+    isVerified: false,
   });
 
+  // Send email
   await sendEmail(
     email,
-    "Account Verification",
+    "Account Verification - VoteSecure",
     `Your verification code is ${verificationCode}`,
-    `<h2>Your verification code</h2><p><b>${verificationCode}</b></p>`
+    `<h2>Account Verification</h2><p>Your verification code is: <b>${verificationCode}</b></p>`
   );
 
   return true;
@@ -51,7 +53,7 @@ export const registerService = async (email: string, password: string) => {
 
 export const verifyService = async (email: string, code: string) => {
   const user = await db.query.users.findFirst({
-    where: eq(users.email, email)
+    where: eq(users.email, email),
   });
 
   if (!user || user.verificationCode !== code) {
@@ -68,34 +70,20 @@ export const verifyService = async (email: string, code: string) => {
 
 export const loginService = async (email: string, password: string) => {
   const user = await db.query.users.findFirst({
-    where: eq(users.email, email)
+    where: eq(users.email, email),
   });
 
-  if (!user) {
-    throw new Error("User not registered");
-  }
-
-  if (!user.isVerified) {
-    throw new Error("Account not verified");
-  }
+  if (!user) throw new Error("User not registered");
+  if (!user.isVerified) throw new Error("Account not verified");
 
   const isMatch = await bcrypt.compare(password, user.passwordHash);
-
-  if (!isMatch) {
-    throw new Error("Invalid credentials");
-  }
+  if (!isMatch) throw new Error("Invalid credentials");
 
   const token = jwt.sign(
-    {
-      userId: user.userId,
-      role: user.role
-    },
+    { userId: user.userId, role: user.role },
     JWT_SECRET,
     { expiresIn: "1d" }
   );
 
-  return {
-    token,
-    role: user.role
-  };
+  return { token, role: user.role };
 };
