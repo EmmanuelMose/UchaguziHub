@@ -15,6 +15,8 @@ const VerifyUser = () => {
 
   const { register, handleSubmit, formState: { errors } } = useForm<VerifyFormData>();
 
+  if (!email) return <p>Invalid access. Please register first.</p>;
+
   const onSubmit = async (data: VerifyFormData) => {
     try {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/verify`, {
@@ -31,8 +33,6 @@ const VerifyUser = () => {
       setServerError(error.response?.data?.message || "Server error");
     }
   };
-
-  if (!email) return <p>Invalid access. Please register first.</p>;
 
   return (
     <div className="form-container">

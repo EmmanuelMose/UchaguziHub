@@ -18,8 +18,12 @@ const Login = () => {
       const res = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, data);
 
       if (res.data.success) {
-        // Redirect to dashboard or home
-        navigate("/dashboard");
+        const role = res.data.role;
+        // Redirect based on role
+        if (role === "Admin") navigate("/admin-dashboard");
+        else if (role === "User") navigate("/user-dashboard");
+        else if (role === "Election Officer") navigate("/officer-dashboard");
+        else navigate("/dashboard");
       } else {
         setServerError(res.data.message);
       }
@@ -38,10 +42,7 @@ const Login = () => {
             type="email"
             {...register("email", {
               required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email address",
-              },
+              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email" },
             })}
           />
           {errors.email && <p className="error">{errors.email.message}</p>}

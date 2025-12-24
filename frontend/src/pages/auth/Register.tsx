@@ -12,7 +12,7 @@ type RegisterFormData = {
 const Register = () => {
   const navigate = useNavigate();
   const [serverError, setServerError] = useState("");
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<RegisterFormData>();
+  const { register, handleSubmit, formState: { errors }, watch } = useForm<RegisterFormData>();
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
@@ -46,10 +46,7 @@ const Register = () => {
             type="email"
             {...register("email", {
               required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email address",
-              },
+              pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email" },
             })}
           />
           {errors.email && <p className="error">{errors.email.message}</p>}
@@ -64,7 +61,7 @@ const Register = () => {
               minLength: { value: 8, message: "Minimum 8 characters" },
               pattern: {
                 value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
-                message: "Password must have uppercase, lowercase, number, special char",
+                message: "Password must include uppercase, lowercase, number & special char",
               },
             })}
           />

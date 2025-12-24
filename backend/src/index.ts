@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import authRouter from "./auth/auth.routes";
+import authRouter from "../../backend/src/auth/auth.router";
 
 const initializeApp = () => {
   const app = express();
