@@ -10,7 +10,7 @@ const aboutFeatures = [
   },
   {
     icon: <Target className="about-icon" />,
-    title: "Our Mission",``
+    title: "Our Mission",
     description: "To provide a reliable and easy-to-use online voting system, ensuring fair elections with verifiable results for all communities.",
   },
   {

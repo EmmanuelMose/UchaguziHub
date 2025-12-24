@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
+import authRouter from "./auth/auth.routes";
 
 const initializeApp = () => {
   const app = express();
 
-  // Middleware
   app.use(express.json());
   app.use(
     cors({
@@ -13,10 +13,11 @@ const initializeApp = () => {
     })
   );
 
-  // Test route
   app.get("/", (_req, res) => {
     res.send("Hello Express!");
   });
+
+  app.use("/api/auth", authRouter);
 
   return app;
 };

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import './Header.css';
-import logo from "../../assets/logo.png"; //  Import your logo
+import logo from "../../assets/logo.png"; 
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +18,6 @@ const Header = () => {
     <header className="header">
       <div className="header-container">
 
-        {/* ✅ Logo inserted here */}
         <Link to="/" className="logo">
           <img src={logo} alt="UchaguziHub Logo" className="header-logo" />
           <span className="logo-text">UchaguziHub</span>
@@ -31,11 +30,10 @@ const Header = () => {
         </nav>
 
         <div className="auth-buttons">
-          <button className="login-btn">Log In</button>
-          <button className="signup-btn">Sign Up</button>
+          <Link to="/login" className="login-btn">Login</Link>
+          <Link to="/register" className="signup-btn">Register</Link>
         </div>
 
-        {/* Mobile toggle */}
         <div className="mobile-menu-toggle">
           <button onClick={() => setIsOpen(!isOpen)}>
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -53,8 +51,8 @@ const Header = () => {
           ))}
 
           <div className="mobile-auth-buttons">
-            <button className="login-btn">Log In</button>
-            <button className="signup-btn">Sign Up</button>
+            <Link to="/login" className="login-btn" onClick={() => setIsOpen(false)}>Login</Link>
+            <Link to="/register" className="signup-btn" onClick={() => setIsOpen(false)}>Register</Link>
           </div>
         </div>
       )}
