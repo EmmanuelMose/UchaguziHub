@@ -1,5 +1,5 @@
 import db from "./db"; // Drizzle DB instance
-import { systemUsers, users, elections, positions, candidates, votes } from "./schema";
+import { systemUsers, users, elections, positions, candidates } from "./schema";
 import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 
@@ -16,7 +16,6 @@ function generatePasswordHash(password: string) {
 
 async function seed() {
   // Clear tables
-  await db.delete(votes).execute();
   await db.delete(candidates).execute();
   await db.delete(positions).execute();
   await db.delete(elections).execute();
@@ -45,7 +44,7 @@ async function seed() {
       registrationNumber: systemUsersData[0].registrationNumber,
       email: systemUsersData[0].email,
       role: "Admin",
-      passwordHash: generatePasswordHash("Admin123!"), // ✅ strong password
+      passwordHash: generatePasswordHash("Admin123!"),
       verificationCode: null,
       isVerified: true,
       createdAt: new Date(),
@@ -114,22 +113,6 @@ async function seed() {
     }))
   );
   await db.insert(candidates).values(candidatesData).execute();
-
-  // Seed votes (example)
-  const votesData = Array.from({ length: 20 }, (_, i) => {
-    const voter = verifiedUsersData[i % verifiedUsersData.length];
-    const position = positionsData[i % positionsData.length];
-    const candidate = candidatesData[i % candidatesData.length];
-    return {
-      voteId: uuid(),
-      voterId: voter.userId,
-      candidateId: candidate.candidateId,
-      electionId,
-      positionId: position.positionId,
-      createdAt: new Date(),
-    };
-  });
-  await db.insert(votes).values(votesData).execute();
 
   console.log("✅ Database seeded successfully!");
 }
