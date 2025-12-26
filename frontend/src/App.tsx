@@ -4,9 +4,13 @@ import Error from "./components/error/Error";
 import Register from "../src/pages/auth/Register";
 import VerifyUser from "../src/pages/auth/VerifyUser";
 import Login from "../src/pages/auth/Login";
+import ForgotPassword from "../../frontend/src/pages/auth/ForgetPassword";
+import VerifyResetCode from "./pages/auth/VerifyResetCode";
+import ResetPassword from "./pages/auth/ResetPassword";
 import AdminDashboard from "../src/pages/auth/dashboard/AdminDashboard/AdminDashboard";
 import UserDashboard from "../src/pages/auth/dashboard/UserDashboard/UserDashboard";
 import OfficerDashboard from "../src/pages/auth/dashboard/ElectionOfficerDashboad/ElectionOfficerDashboard";
+
 
 function App() {
   const router = createBrowserRouter([
@@ -27,6 +31,18 @@ function App() {
       path: "/login",
       element: <Login />,
     },
+    {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/verify-reset-code",
+    element: <VerifyResetCode />,
+  },
+  {
+    path: "/reset-password",
+    element: <ResetPassword />,
+  },
     {
       path: "/admin-dashboard",
       element: <AdminDashboard />,

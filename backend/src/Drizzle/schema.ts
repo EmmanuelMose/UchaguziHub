@@ -29,6 +29,8 @@ export const users = pgTable("users", {
   email: varchar("email", { length: 150 }).notNull().unique(),
   role: varchar("role", { length: 30 }).notNull(),
   passwordHash: text("password_hash").notNull(),
+  resetCode: varchar("reset_code", { length: 6 }),
+  resetCodeExpiresAt: timestamp("reset_code_expires_at"),
   verificationCode: varchar("verification_code", { length: 10 }),
   isVerified: boolean("is_verified").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull()
