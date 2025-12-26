@@ -7,19 +7,29 @@ const initializeApp = () => {
 
   app.use(express.json());
 
+  const allowedOrigins = [
+    "https://uchaguzi-hub.vercel.app",
+    "http://localhost:5173"
+  ];
+
   app.use(
     cors({
-      origin: "https://uchaguzi-hub.vercel.app",
+      origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error("Not allowed by CORS"));
+        }
+      },
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE"],
     })
   );
 
   app.get("/", (_req, res) => {
-    res.send("Hello Express!");
+    res.send("Backend server running successfully!");
   });
 
-  //  AUTH ROUTES
   app.use("/api/auth", authRouter);
 
   return app;
