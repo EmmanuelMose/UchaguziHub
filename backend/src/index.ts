@@ -9,7 +9,7 @@ const initializeApp = () => {
 
   app.use(
     cors({
-      origin: "https://uchaguzi-hub.vercel.app/",
+      origin: "https://uchaguzi-hub.vercel.app",
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE"],
     })
