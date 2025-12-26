@@ -61,8 +61,6 @@ export const registerService = async (
   );
 };
 
-
-
 export const verifyService = async (email: string, code: string) => {
   const user = await db.query.users.findFirst({
     where: eq(users.email, email),
@@ -76,8 +74,6 @@ export const verifyService = async (email: string, code: string) => {
     .set({ isVerified: true, verificationCode: null })
     .where(eq(users.userId, user.userId));
 };
-
-
 
 export const loginService = async (email: string, password: string) => {
   const user = await db.query.users.findFirst({
@@ -124,8 +120,6 @@ export const forgotPasswordService = async (email: string) => {
     `<h2>Password Reset</h2><p>Code: <b>${resetCode}</b></p>`
   );
 };
-
-
 
 export const verifyResetCodeService = async (email: string, code: string) => {
   const user = await db.query.users.findFirst({
