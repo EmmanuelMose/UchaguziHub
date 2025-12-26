@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import authRouter from "./auth/auth.router"; // ✅ FIXED PATH
+import authRouter from "./auth/auth.router"; 
 
 const initializeApp = () => {
   const app = express();
@@ -9,7 +9,7 @@ const initializeApp = () => {
 
   app.use(
     cors({
-      origin: "http://localhost:5173",
+      origin: "https://uchaguzi-hub.vercel.app/",
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE"],
     })

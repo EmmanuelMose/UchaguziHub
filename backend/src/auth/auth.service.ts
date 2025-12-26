@@ -10,7 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 const generateCode = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
 
-/* ================= REGISTER ================= */
+
 
 export const registerService = async (
   fullName: string,
@@ -61,7 +61,7 @@ export const registerService = async (
   );
 };
 
-/* ================= VERIFY ACCOUNT ================= */
+
 
 export const verifyService = async (email: string, code: string) => {
   const user = await db.query.users.findFirst({
@@ -77,7 +77,7 @@ export const verifyService = async (email: string, code: string) => {
     .where(eq(users.userId, user.userId));
 };
 
-/* ================= LOGIN ================= */
+
 
 export const loginService = async (email: string, password: string) => {
   const user = await db.query.users.findFirst({
@@ -99,7 +99,7 @@ export const loginService = async (email: string, password: string) => {
   return { token, role: user.role };
 };
 
-/* ================= FORGOT PASSWORD ================= */
+
 
 export const forgotPasswordService = async (email: string) => {
   const user = await db.query.users.findFirst({
@@ -125,7 +125,7 @@ export const forgotPasswordService = async (email: string) => {
   );
 };
 
-/* ================= VERIFY RESET CODE ================= */
+
 
 export const verifyResetCodeService = async (email: string, code: string) => {
   const user = await db.query.users.findFirst({
@@ -142,7 +142,7 @@ export const verifyResetCodeService = async (email: string, code: string) => {
   }
 };
 
-/* ================= RESET PASSWORD ================= */
+
 
 export const resetPasswordService = async (email: string, password: string) => {
   const user = await db.query.users.findFirst({
