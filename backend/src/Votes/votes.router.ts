@@ -1,11 +1,16 @@
 import { Router } from "express";
-import { votesController } from "./votes.controller";
+import {
+  getAllVotesController,
+  getVoteByIdController,
+  createVoteController,
+  deleteVoteController
+} from "../Votes/votes.contoller";
 
 const votesRouter = Router();
 
-votesRouter.get("/", votesController.getAll);
-votesRouter.get("/:id", votesController.getById);
-votesRouter.post("/", votesController.create);
-votesRouter.delete("/:id", votesController.delete);
+votesRouter.get("/", getAllVotesController);
+votesRouter.get("/:id", getVoteByIdController);
+votesRouter.post("/", createVoteController);
+votesRouter.delete("/:id", deleteVoteController);
 
 export default votesRouter;
