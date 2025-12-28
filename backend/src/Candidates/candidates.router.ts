@@ -1,14 +1,22 @@
 import { Router } from "express";
-import { candidatesController } from "./candidates.controller";
+import {
+  getAllCandidatesController,
+  getCandidateByIdController,
+  getCandidatesByElectionController,
+  getCandidatesByPositionController,
+  createCandidateController,
+  updateCandidateController,
+  deleteCandidateController
+} from "./candidates.controller";
 
 const candidatesRouter = Router();
 
-candidatesRouter.get("/", candidatesController.getAll);
-candidatesRouter.get("/:id", candidatesController.getById);
-candidatesRouter.get("/election/:electionId", candidatesController.getByElection);
-candidatesRouter.get("/position/:positionId", candidatesController.getByPosition);
-candidatesRouter.post("/", candidatesController.create);
-candidatesRouter.put("/:id", candidatesController.update);
-candidatesRouter.delete("/:id", candidatesController.delete);
+candidatesRouter.get("/", getAllCandidatesController);
+candidatesRouter.get("/:id", getCandidateByIdController);
+candidatesRouter.get("/election/:electionId", getCandidatesByElectionController);
+candidatesRouter.get("/position/:positionId", getCandidatesByPositionController);
+candidatesRouter.post("/", createCandidateController);
+candidatesRouter.put("/:id", updateCandidateController);
+candidatesRouter.delete("/:id", deleteCandidateController);
 
 export default candidatesRouter;

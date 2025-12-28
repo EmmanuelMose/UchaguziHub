@@ -1,13 +1,66 @@
-import { db } from "../../db";
-import { candidates } from "../../schema";
+import db from "../Drizzle/db";
+import { candidates } from "../Drizzle/schema";
+import { eq } from "drizzle-orm";
+
+interface Candidate {
+  candidateId: string;
+  userId: string;
+  electionId: string;
+  positionId: string;
+  faculty: string | null;
+  manifesto: string | null;
+  createdAt: Date;
+}
+
+interface NewCandidate {
+  userId: string;
+  electionId: string;
+  positionId: string;
+  faculty?: string | null;
+  manifesto?: string | null;
+}
 
 export const candidatesService = {
-  getAll: async () => db.select().from(candidates),
-  getById: async (id: string) => db.select().from(candidates).where(candidates.candidateId.eq(id)),
-  getByElection: async (electionId: string) => db.select().from(candidates).where(candidates.electionId.eq(electionId)),
-  getByPosition: async (positionId: string) => db.select().from(candidates).where(candidates.positionId.eq(positionId)),
-  create: async (data: Partial<typeof candidates._type>) => db.insert(candidates).values(data).returning(),
-  update: async (id: string, data: Partial<typeof candidates._type>) =>
-    db.update(candidates).set(data).where(candidates.candidateId.eq(id)).returning(),
-  delete: async (id: string) => db.delete(candidates).where(candidates.candidateId.eq(id)).returning(),
+  getAll: async (): Promise<Candidate[]> => {
+    return await db.query.candidates.findMany();
+  },
+
+  getById: async (id: string): Promise<Candidate | null> => {
+    const result = await db.query.candidates.findFirst({
+      where: eq(candidates.candidateId, id),
+    });
+    return result || null;
+  },
+
+  getByElection: async (electionId: string): Promise<Candidate[]> => {
+    return await db.query.candidates.findMany({
+      where: eq(candidates.electionId, electionId),
+    });
+  },
+
+  getByPosition: async (positionId: string): Promise<Candidate[]> => {
+    return await db.query.candidates.findMany({
+      where: eq(candidates.positionId, positionId),
+    });
+  },
+
+  create: async (data: NewCandidate): Promise<Candidate> => {
+    const [created] = await db.insert(candidates).values(data).returning();
+    return created;
+  },
+
+  update: async (id: string, data: Partial<NewCandidate>): Promise<Candidate | null> => {
+    const [updated] = await db.update(candidates)
+      .set(data)
+      .where(eq(candidates.candidateId, id))
+      .returning();
+    return updated || null;
+  },
+
+  delete: async (id: string): Promise<Candidate | null> => {
+    const [deleted] = await db.delete(candidates)
+      .where(eq(candidates.candidateId, id))
+      .returning();
+    return deleted || null;
+  },
 };

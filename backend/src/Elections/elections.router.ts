@@ -1,12 +1,18 @@
 import { Router } from "express";
-import { electionsController } from "./elections.controller";
+import {
+  getAllElectionsController,
+  getElectionByIdController,
+  createElectionController,
+  updateElectionController,
+  deleteElectionController
+} from "./elections.controller";
 
 const electionsRouter = Router();
 
-electionsRouter.get("/", electionsController.getAll);
-electionsRouter.get("/:id", electionsController.getById);
-electionsRouter.post("/", electionsController.create);
-electionsRouter.put("/:id", electionsController.update);
-electionsRouter.delete("/:id", electionsController.delete);
+electionsRouter.get("/", getAllElectionsController);
+electionsRouter.get("/:id", getElectionByIdController);
+electionsRouter.post("/", createElectionController);
+electionsRouter.put("/:id", updateElectionController);
+electionsRouter.delete("/:id", deleteElectionController);
 
 export default electionsRouter;
