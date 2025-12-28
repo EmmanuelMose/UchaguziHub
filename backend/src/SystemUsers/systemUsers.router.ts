@@ -1,12 +1,18 @@
 import { Router } from "express";
-import { systemUsersController } from "./systemUsers.controller";
+import {
+  getAllSystemUsersController,
+  getSystemUserByIdController,
+  createSystemUserController,
+  updateSystemUserController,
+  deleteSystemUserController
+} from "./systemUsers.controller";
 
 const systemUsersRouter = Router();
 
-systemUsersRouter.get("/", systemUsersController.getAll);
-systemUsersRouter.get("/:id", systemUsersController.getById);
-systemUsersRouter.post("/", systemUsersController.create);
-systemUsersRouter.put("/:id", systemUsersController.update);
-systemUsersRouter.delete("/:id", systemUsersController.delete);
+systemUsersRouter.get("/", getAllSystemUsersController);
+systemUsersRouter.get("/:id", getSystemUserByIdController);
+systemUsersRouter.post("/", createSystemUserController);
+systemUsersRouter.put("/:id", updateSystemUserController);
+systemUsersRouter.delete("/:id", deleteSystemUserController);
 
 export default systemUsersRouter;
