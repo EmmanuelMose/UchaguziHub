@@ -35,15 +35,35 @@ export const electionsService = {
   },
 
   create: async (data: NewElection): Promise<Election> => {
-    const [created] = await db.insert(elections).values(data).returning();
-    return created;
-  },
+  // Ensure startDate and endDate are JS Date objects
+  const insertData = {
+    title: data.title,
+    description: data.description || null,
+    startDate: new Date(data.startDate),
+    endDate: new Date(data.endDate),
+    status: data.status || "Upcoming",
+    createdBy: data.createdBy, // must provide a valid userId
+  };
+
+  const [created] = await db.insert(elections)
+    .values(insertData)
+    .returning();
+
+  return created;
+},
 
   update: async (id: string, data: Partial<NewElection>): Promise<Election | null> => {
+    const updateData: Partial<NewElection> = {
+      ...data,
+      startDate: data.startDate ? new Date(data.startDate) : undefined,
+      endDate: data.endDate ? new Date(data.endDate) : undefined,
+    };
+
     const [updated] = await db.update(elections)
-      .set(data)
+      .set(updateData)
       .where(eq(elections.electionId, id))
       .returning();
+
     return updated || null;
   },
 
@@ -51,6 +71,7 @@ export const electionsService = {
     const [deleted] = await db.delete(elections)
       .where(eq(elections.electionId, id))
       .returning();
+
     return deleted || null;
   },
 };

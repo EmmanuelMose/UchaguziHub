@@ -33,10 +33,11 @@ export const candidatesService = {
   },
 
   getByElection: async (electionId: string): Promise<Candidate[]> => {
-    return await db.query.candidates.findMany({
-      where: eq(candidates.electionId, electionId),
-    });
-  },
+  return await db.query.candidates.findMany({
+    where: (c) => eq(c.electionId, electionId),
+  });
+},
+
 
   getByPosition: async (positionId: string): Promise<Candidate[]> => {
     return await db.query.candidates.findMany({
