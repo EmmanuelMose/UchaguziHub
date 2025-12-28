@@ -1,13 +1,20 @@
 import { Router } from "express";
-import { positionsController } from "./positions.controller";
+import {
+  getAllPositionsController,
+  getPositionByIdController,
+  getPositionsByElectionController,
+  createPositionController,
+  updatePositionController,
+  deletePositionController
+} from "./positions.controller";
 
 const positionsRouter = Router();
 
-positionsRouter.get("/", positionsController.getAll);
-positionsRouter.get("/:id", positionsController.getById);
-positionsRouter.get("/election/:electionId", positionsController.getByElection);
-positionsRouter.post("/", positionsController.create);
-positionsRouter.put("/:id", positionsController.update);
-positionsRouter.delete("/:id", positionsController.delete);
+positionsRouter.get("/", getAllPositionsController);
+positionsRouter.get("/:id", getPositionByIdController);
+positionsRouter.get("/election/:electionId", getPositionsByElectionController);
+positionsRouter.post("/", createPositionController);
+positionsRouter.put("/:id", updatePositionController);
+positionsRouter.delete("/:id", deletePositionController);
 
 export default positionsRouter;
