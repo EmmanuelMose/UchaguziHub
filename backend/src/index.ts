@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
 import authRouter from "./auth/auth.router";
-import systemUsersRouter from "./systemUsers/systemUsers.router";
-import usersRouter from "./users/users.router";
-import electionsRouter from "./elections/elections.router";
-import positionsRouter from "./positions/positions.router";
-import candidatesRouter from "./candidates/candidates.router";
-import votesRouter from "./votes/votes.router";
+import systemUsersRouter from "./SystemUsers/systemUsers.router";
+import usersRouter from "./Users/users.router";
+import electionsRouter from "./Elections/elections.router";
+import positionsRouter from "./Positions/positions.router";
+import candidatesRouter from "./Candidates/candidates.router";
+import votesRouter from "./Votes/votes.router";
 
 const initializeApp = () => {
   const app = express();
