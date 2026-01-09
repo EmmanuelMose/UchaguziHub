@@ -4,7 +4,7 @@ import {
   getVoteByIdController,
   createVoteController,
   deleteVoteController
-} from "../Votes/votes.contoller";
+} from "./votes.controller";
 
 const votesRouter = Router();
 
