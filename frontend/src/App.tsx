@@ -1,4 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useSelector } from "react-redux";
+import type { RootState } from "../src/app/store"; // Adjust the path to match your store location
+ // Adjust the path to match your store location
 import LandingPage from "./pages/LandingPage";
 import Error from "./components/error/Error";
 import Register from "../src/pages/auth/Register";
@@ -7,12 +10,19 @@ import Login from "../src/pages/auth/Login";
 import ForgotPassword from "../../frontend/src/pages/auth/ForgetPassword";
 import VerifyResetCode from "./pages/auth/VerifyResetCode";
 import ResetPassword from "./pages/auth/ResetPassword";
-import AdminDashboard from "../src/pages/auth/dashboard/AdminDashboard/AdminDashboard";
+//import AdminDashboard from "../src/pages/auth/dashboard/AdminDashboard/AdminDashboard";
 import UserDashboard from "../src/pages/auth/dashboard/UserDashboard/UserDashboard";
-import OfficerDashboard from "../src/pages/auth/dashboard/ElectionOfficerDashboad/ElectionOfficerDashboard";
+//import OfficerDashboard from "../src/pages/auth/dashboard/ElectionOfficerDashboad/ElectionOfficerDashboard";
+import CastVote from "./pages/auth/dashboard/UserDashboard/castVote/CastVote";
+import ViewResults from "./pages/auth/dashboard/UserDashboard/viewResults/ViewResults";
+import Analytics from "./pages/auth/dashboard/UserDashboard/analytics/Analytics";
+import UserComplain from "./pages/auth/dashboard/UserDashboard/complains/UserComplain";
 
 
 function App() {
+  //const isAdmin = useSelector((state: RootState) => state.user.user?.role === 'Admin');
+  const isUser = useSelector((state: RootState) => state.user.user?.role === 'User');
+  
   const router = createBrowserRouter([
     {
       path: "/",
@@ -43,18 +53,37 @@ function App() {
     path: "/reset-password",
     element: <ResetPassword />,
   },
+  
+  // User dashboard routes
     {
-      path: "/admin-dashboard",
-      element: <AdminDashboard />,
+      path: '/user/dashboard',
+      element: isUser ? <UserDashboard /> : <Login />,
+      children: [
+        {
+          path: 'castVote',
+          element: < CastVote/>
+        },
+        {
+          path: 'viewResults',
+          element: < ViewResults/>,
+        },
+        {
+          path: 'complaints',
+          element: < UserComplain/>
+        },
+        {
+          path: 'analytics',
+          element: < Analytics electionId={""}/>,
+        },
+        
+        // {
+        //   path: 'logout',
+        //   element: < />
+        // },
+         
+      ]
     },
-    {
-      path: "/user-dashboard",
-      element: <UserDashboard />,
-    },
-    {
-      path: "/officer-dashboard",
-      element: <OfficerDashboard />,
-    },
+    
     {
       path: "*",
       element: <Error />,
@@ -65,3 +94,4 @@ function App() {
 }
 
 export default App;
+
