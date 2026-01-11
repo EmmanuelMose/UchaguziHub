@@ -9,6 +9,7 @@ import {
   index
 } from "drizzle-orm/pg-core";
 
+
 export const systemUsers = pgTable("system_users", {
   systemUserId: uuid("system_user_id").defaultRandom().primaryKey(),
   fullName: varchar("full_name", { length: 150 }).notNull(),
@@ -98,3 +99,15 @@ export const votes = pgTable(
     candidateIndex: index("idx_votes_candidate").on(table.candidateId)
   })
 );
+
+export const complaints = pgTable("complaints", {
+  complaintId: uuid("complaint_id").defaultRandom().primaryKey(),
+
+  userId: uuid("user_id")
+    .references(() => users.userId, { onDelete: "cascade" })
+    .notNull(),
+
+  complaint: text("complaint").notNull(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull()
+});

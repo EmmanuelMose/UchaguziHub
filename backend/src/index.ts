@@ -7,6 +7,7 @@ import electionsRouter from "./Elections/elections.router";
 import positionsRouter from "./Positions/positions.router";
 import candidatesRouter from "./Candidates/candidates.router";
 import votesRouter from "./Votes/votes.router";
+import  {ComplainRouter}  from "./complains/complains.router";
 
 const initializeApp = () => {
   const app = express();
@@ -43,6 +44,8 @@ const initializeApp = () => {
   app.use("/api/positions", positionsRouter);
   app.use("/api/candidates", candidatesRouter);
   app.use("/api/votes", votesRouter);
+  app.use("/complaints", ComplainRouter);
+
 
   return app;
 };
