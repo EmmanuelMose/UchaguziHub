@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useSelector } from "react-redux";
-import type { RootState } from "../src/app/store"; // Adjust the path to match your store location
- // Adjust the path to match your store location
+import type { RootState } from "../src/app/store"; 
 import LandingPage from "./pages/LandingPage";
 import Error from "./components/error/Error";
 import Register from "../src/pages/auth/Register";
