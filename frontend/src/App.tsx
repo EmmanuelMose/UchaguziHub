@@ -20,7 +20,7 @@ import UserComplain from "./pages/dashboard/UserDashboard/complains/UserComplain
 
 function App() {
   //const isAdmin = useSelector((state: RootState) => state.user.user?.role === 'Admin');
-   const isUser = useSelector((state: RootState) => state.user.user?.role === 'User');
+   const isStudent = useSelector((state: RootState) => state.user.user?.role === 'Student');
   
   const router = createBrowserRouter([
     {
@@ -57,7 +57,7 @@ function App() {
     {
       path: '/user-dashboard',
       element:
-       isUser ? <UserDashboard /> : <Login />,
+       isStudent ? <UserDashboard /> : <Login />,
        children: [
         {
           path: 'castVote',

@@ -30,14 +30,14 @@ const Register = () => {
     setLoading(true);
     try {
       const res = await axios.post(`${ApiDomain}/api/auth/register`, {
-        fullName: data.fullName,
-        email: data.email,
-        registrationNumber: data.registrationNumber,
-        password: data.password,
+        fullName: data.fullName.trim(),
+        email: data.email.trim(),
+        registrationNumber: data.registrationNumber.trim(),
+        password: data.password.trim(),
       });
 
       if (res.data.success) {
-        navigate("/verify-user", { state: { email: data.email } });
+        navigate("/verify-user", { state: { email: data.email.trim() } });
       } else {
         setServerError(res.data.message);
       }
@@ -52,6 +52,7 @@ const Register = () => {
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md animate-fade-in">
         <h2 className="text-2xl font-bold text-center text-blue-800 mb-6">Register</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Full Name */}
           <div>
             <label className="block mb-1 text-blue-700 font-semibold">Full Name</label>
             <input
@@ -62,6 +63,7 @@ const Register = () => {
             {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName.message}</p>}
           </div>
 
+          {/* Email */}
           <div>
             <label className="block mb-1 text-blue-700 font-semibold">Email</label>
             <input
@@ -78,6 +80,7 @@ const Register = () => {
             {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
           </div>
 
+          {/* Registration Number */}
           <div>
             <label className="block mb-1 text-blue-700 font-semibold">Registration Number</label>
             <input
@@ -88,6 +91,7 @@ const Register = () => {
             {errors.registrationNumber && <p className="text-red-500 text-sm">{errors.registrationNumber.message}</p>}
           </div>
 
+          {/* Password */}
           <div className="relative">
             <label className="block mb-1 text-blue-700 font-semibold">Password</label>
             <input
@@ -111,6 +115,7 @@ const Register = () => {
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
           </div>
 
+          {/* Confirm Password */}
           <div className="relative">
             <label className="block mb-1 text-blue-700 font-semibold">Confirm Password</label>
             <input

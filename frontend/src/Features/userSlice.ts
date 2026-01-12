@@ -5,7 +5,7 @@ interface UserState {
   user: {
     id?: string;
     email?: string;
-    role?: 'Admin' | 'User' | 'ElectionOfficer';
+    role?: 'Admin' | 'Student' | 'ElectionOfficer';
   } | null;
 }
 

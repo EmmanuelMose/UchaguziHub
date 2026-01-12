@@ -1,4 +1,3 @@
-
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -27,18 +26,26 @@ const Login = () => {
     setServerError("");
 
     try {
-      const res = await axios.post(`${ApiDomain}/api/auth/login`, data);
+      const payload = {
+        email: data.email.trim(),
+        password: data.password.trim()
+      };
 
-      if (res.data.success && res.data.user) {
-    
-        dispatch(setUser(res.data.user));
+      const res = await axios.post(`${ApiDomain}/api/auth/login`, payload);
+
+      if (res.data.success && res.data.token) {
+        // Create a user object using the role returned by backend
+        const user = { role: res.data.role };
+
+        // Dispatch to Redux
+        dispatch(setUser(user));
 
         // Persist in localStorage
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("token", res.data.token);
 
         // Navigate based on role
-        switch (res.data.user.role) {
+        switch (user.role.trim()) {
           case "Admin":
             navigate("/admin-dashboard");
             break;
@@ -106,15 +113,13 @@ const Login = () => {
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
           </div>
 
-          {/* Server error */}
+          {/* Server Error */}
           {serverError && <p className="text-red-500 text-center">{serverError}</p>}
 
-          {/* Submit button */}
+          {/* Submit Button */}
           <button
             type="submit"
-            className={`w-full py-2 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 transition-all ${
-              loading ? "cursor-not-allowed" : ""
-            }`}
+            className={`w-full py-2 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 transition-all ${loading ? "cursor-not-allowed" : ""}`}
             disabled={loading}
           >
             {loading ? "Verifying..." : "Login"}
