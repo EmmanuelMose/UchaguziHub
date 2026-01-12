@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../src/app/store"; // Adjust the path to match your store location
  // Adjust the path to match your store location
