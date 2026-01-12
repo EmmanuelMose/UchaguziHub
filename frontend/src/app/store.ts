@@ -16,9 +16,7 @@ const persistConfig = {
   key: "root",
   storage,
 };
-
 const persistedUserReducer = persistReducer(persistConfig, userReducer);
-
 export const store = configureStore({
   reducer: {
     user: persistedUserReducer,
