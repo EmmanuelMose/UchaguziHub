@@ -21,7 +21,7 @@ import UserComplain from "./pages/dashboard/UserDashboard/complains/UserComplain
 
 function App() {
   //const isAdmin = useSelector((state: RootState) => state.user.user?.role === 'Admin');
-   const user = useSelector((state: RootState) => state.user.user);
+   const isUser = useSelector((state: RootState) => state.user.user?.role === 'User');
   
   const router = createBrowserRouter([
     {
@@ -58,8 +58,7 @@ function App() {
     {
       path: '/user-dashboard',
       element:
-       user && user.role === "User" ? <UserDashboard /> : <Navigate to="/login" replace />,
-      
+       isUser ? <UserDashboard /> : <Login />,
        children: [
         {
           path: 'castVote',
