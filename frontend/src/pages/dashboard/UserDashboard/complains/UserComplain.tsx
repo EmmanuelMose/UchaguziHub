@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { submitComplaint } from "../../../../../Features/complains/userComplainAPI";
+import { submitComplaint } from "../../../../Features/complains/userComplainAPI";
 
 const UserComplain = () => {
   const [complaint, setComplaint] = useState("");

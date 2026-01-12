@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import type { RootState } from "../src/app/store"; // Adjust the path to match your store location
  // Adjust the path to match your store location
@@ -11,17 +11,17 @@ import ForgotPassword from "../../frontend/src/pages/auth/ForgetPassword";
 import VerifyResetCode from "./pages/auth/VerifyResetCode";
 import ResetPassword from "./pages/auth/ResetPassword";
 //import AdminDashboard from "../src/pages/auth/dashboard/AdminDashboard/AdminDashboard";
-import UserDashboard from "../src/pages/auth/dashboard/UserDashboard/UserDashboard";
+import UserDashboard from "../src/pages/dashboard/UserDashboard/UserDashboard";
 //import OfficerDashboard from "../src/pages/auth/dashboard/ElectionOfficerDashboad/ElectionOfficerDashboard";
-import CastVote from "./pages/auth/dashboard/UserDashboard/castVote/CastVote";
-import ViewResults from "./pages/auth/dashboard/UserDashboard/viewResults/ViewResults";
-import Analytics from "./pages/auth/dashboard/UserDashboard/analytics/Analytics";
-import UserComplain from "./pages/auth/dashboard/UserDashboard/complains/UserComplain";
+import CastVote from "./pages/dashboard/UserDashboard/castVote/CastVote";
+import ViewResults from "./pages/dashboard/UserDashboard/viewResults/ViewResults";
+import Analytics from "./pages/dashboard/UserDashboard/analytics/Analytics";
+import UserComplain from "./pages/dashboard/UserDashboard/complains/UserComplain";
 
 
 function App() {
   //const isAdmin = useSelector((state: RootState) => state.user.user?.role === 'Admin');
-  const isUser = useSelector((state: RootState) => state.user.user?.role === 'User');
+   const user = useSelector((state: RootState) => state.user.user);
   
   const router = createBrowserRouter([
     {
@@ -56,9 +56,11 @@ function App() {
   
   // User dashboard routes
     {
-      path: '/user/dashboard',
-      element: isUser ? <UserDashboard /> : <Login />,
-      children: [
+      path: '/user-dashboard',
+      element:
+       user && user.role === "User" ? <UserDashboard /> : <Navigate to="/login" replace />,
+      
+       children: [
         {
           path: 'castVote',
           element: < CastVote/>

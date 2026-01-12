@@ -1,12 +1,11 @@
 import { AiOutlineCheckCircle, AiOutlineBarChart, AiOutlineMessage, AiOutlineLogout } from "react-icons/ai";
-//import { FaVoteYea } from "react-icons/fa6"; // optional alternative icon
 
 export type DrawerData = {
   id: string;
   name: string;
   icon: React.ComponentType<{ size?: number }>;
   link: string;
-  requiresElectionClosed?: boolean; 
+  requiresElectionClosed?: boolean;
 };
 
 export const userDrawerData: DrawerData[] = [
@@ -20,8 +19,8 @@ export const userDrawerData: DrawerData[] = [
     id: "viewResults",
     name: "View Results",
     icon: AiOutlineBarChart,
-    link: "results",
-    requiresElectionClosed: true, 
+    link: "viewResults",
+    requiresElectionClosed: true,
   },
   {
     id: "complaints",
@@ -34,7 +33,7 @@ export const userDrawerData: DrawerData[] = [
     name: "Analytics",
     icon: AiOutlineBarChart,
     link: "analytics",
-    requiresElectionClosed: true, 
+    requiresElectionClosed: true,
   },
   {
     id: "logout",

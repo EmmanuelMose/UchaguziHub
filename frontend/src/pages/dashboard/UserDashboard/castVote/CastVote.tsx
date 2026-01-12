@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CastVoteAPI } from "../../../../../Features/castVote/castVoteAPI";
+import { CastVoteAPI } from "../../../../Features/castVote/castVoteAPI";
 
 const CastVote = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");

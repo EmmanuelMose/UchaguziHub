@@ -1,35 +1,44 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { userDrawerData } from "./drawerData";
+import { userDrawerData, type DrawerData } from "./drawerData";
 
 type UserDrawerProps = {
-  isElectionClosed?: boolean; 
+  isSidebarOpen: boolean;
+  onToggle: () => void;
+  isElectionClosed?: boolean;
 };
 
-const UserDrawer = ({ isElectionClosed = false }: UserDrawerProps) => {
+const UserDrawer = ({
+  isSidebarOpen,
+  onToggle,
+  isElectionClosed = false,
+}: UserDrawerProps) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Clear auth data
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-
     navigate("/login");
   };
 
   return (
-    <aside className="w-64 min-h-screen bg-gray-900 text-white flex flex-col">
+    <aside
+      className={`bg-gray-900 text-white h-full flex flex-col transition-all duration-300 ${
+        isSidebarOpen ? "w-64" : "w-16"
+      }`}
+    >
       {/* Header */}
-      <div className="p-6 text-xl font-bold border-b border-gray-700">
-        Student Dashboard
+      <div className="p-6 text-xl font-bold border-b border-gray-700 flex justify-between items-center">
+        {isSidebarOpen && <span>User Dashboard</span>}
+        <button onClick={onToggle} className="text-gray-300 hover:text-white text-xl">
+          {isSidebarOpen ? "❌" : "☰"}
+        </button>
       </div>
 
-      {/* Menu */}
-      <nav className="flex-1 p-4 space-y-2">
-        {userDrawerData.map((item) => {
-          // Hide results if election not closed
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        {userDrawerData.map((item: DrawerData) => {
           if (item.requiresElectionClosed && !isElectionClosed) return null;
 
-          // Logout is handled separately
           if (item.id === "logout") {
             return (
               <button
@@ -38,7 +47,7 @@ const UserDrawer = ({ isElectionClosed = false }: UserDrawerProps) => {
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-red-600 transition"
               >
                 <item.icon size={20} />
-                <span>{item.name}</span>
+                {isSidebarOpen && <span>{item.name}</span>}
               </button>
             );
           }
@@ -49,14 +58,12 @@ const UserDrawer = ({ isElectionClosed = false }: UserDrawerProps) => {
               to={item.link}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-lg transition ${
-                  isActive
-                    ? "bg-blue-600"
-                    : "hover:bg-gray-800"
+                  isActive ? "bg-blue-600" : "hover:bg-gray-800"
                 }`
               }
             >
               <item.icon size={20} />
-              <span>{item.name}</span>
+              {isSidebarOpen && <span>{item.name}</span>}
             </NavLink>
           );
         })}

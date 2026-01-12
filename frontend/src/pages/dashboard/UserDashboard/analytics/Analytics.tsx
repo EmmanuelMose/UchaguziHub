@@ -11,8 +11,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import {fetchElectionResults} from "../../../../../Features/analytics/AnalyticsAPI";
-import type { CandidateResult } from "../../../../../Features/analytics/AnalyticsAPI";
+import {fetchElectionResults} from "../../../../Features/analytics/AnalyticsAPI";
+import type { CandidateResult } from "../../../../Features/analytics/AnalyticsAPI";
 
 const COLORS = ["#2563eb", "#16a34a", "#dc2626", "#f59e0b", "#7c3aed"];
 

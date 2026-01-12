@@ -1,4 +1,5 @@
-import { configureStore } from "@reduxjs/toolkit";
+// src/app/store.ts
+import { configureStore } from '@reduxjs/toolkit';
 import {
   persistStore,
   persistReducer,
@@ -8,15 +9,17 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import userReducer from "../Features/userSlice";
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import userReducer from '../Features/userSlice';
 
 const persistConfig = {
-  key: "root",
+  key: 'root',
   storage,
 };
+
 const persistedUserReducer = persistReducer(persistConfig, userReducer);
+
 export const store = configureStore({
   reducer: {
     user: persistedUserReducer,
@@ -28,6 +31,8 @@ export const store = configureStore({
       },
     }),
 });
+
 export const persistedStore = persistStore(store);
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

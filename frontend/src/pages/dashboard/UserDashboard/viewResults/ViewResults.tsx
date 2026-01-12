@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ViewResultsAPI } from "../../../../../Features/viewResults/ViewResultAPI";
+import { ViewResultsAPI } from "../../../../Features/viewResults/ViewResultAPI";
 
 const ViewResults = () => {
   const [candidates, setCandidates] = useState<any[]>([]);

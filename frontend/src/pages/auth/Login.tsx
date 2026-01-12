@@ -1,7 +1,10 @@
+
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../Features/userSlice"; 
 import { ApiDomain } from "../../utils/APIDomain";
 import { Eye, EyeOff } from "lucide-react";
 
@@ -12,6 +15,7 @@ type LoginFormData = {
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -20,19 +24,38 @@ const Login = () => {
 
   const onSubmit = async (data: LoginFormData) => {
     setLoading(true);
+    setServerError("");
+
     try {
       const res = await axios.post(`${ApiDomain}/api/auth/login`, data);
 
-      if (res.data.success) {
-        if (res.data.role === "Admin") navigate("/admin-dashboard");
-        else if (res.data.role === "ElectoralOfficer") navigate("/officer-dashboard");
-        else navigate("/user-dashboard");
+      if (res.data.success && res.data.user) {
+    
+        dispatch(setUser(res.data.user));
+
+        // Persist in localStorage
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        localStorage.setItem("token", res.data.token);
+
+        // Navigate based on role
+        switch (res.data.user.role) {
+          case "Admin":
+            navigate("/admin-dashboard");
+            break;
+          case "ElectionOfficer":
+            navigate("/officer-dashboard");
+            break;
+          default:
+            navigate("/user-dashboard");
+            break;
+        }
       } else {
-        setServerError(res.data.message);
+        setServerError(res.data.message || "Invalid login credentials");
       }
     } catch (error: any) {
       setServerError(error.response?.data?.message || "Server error");
     }
+
     setLoading(false);
   };
 
@@ -40,7 +63,9 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-blue-50">
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md animate-fade-in">
         <h2 className="text-2xl font-bold text-center text-blue-800 mb-6">Login</h2>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Email */}
           <div>
             <label className="block mb-1 text-blue-700 font-semibold">Email</label>
             <input
@@ -57,6 +82,7 @@ const Login = () => {
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
+          {/* Password */}
           <div className="relative">
             <label className="block mb-1 text-blue-700 font-semibold">Password</label>
             <input
@@ -80,8 +106,10 @@ const Login = () => {
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
           </div>
 
+          {/* Server error */}
           {serverError && <p className="text-red-500 text-center">{serverError}</p>}
 
+          {/* Submit button */}
           <button
             type="submit"
             className={`w-full py-2 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 transition-all ${
@@ -93,6 +121,7 @@ const Login = () => {
           </button>
         </form>
 
+        {/* Links */}
         <div className="mt-4 text-center text-sm">
           <p>
             Forgot your password?{" "}
