@@ -46,7 +46,7 @@ export const votesService = {
     });
     if (!candidateExists) throw new Error("Candidate does not exist.");
 
-    //Prevent voting more than once in the same election
+    // Prevent voting more than once in the same election
     const existingElectionVote = await db.query.votes.findFirst({
       where: and(
         eq(votes.voterId, data.voterId),
@@ -69,4 +69,15 @@ export const votesService = {
       .returning();
     return deleted || null;
   },
+
+  // Check if a voter has voted in a specific election
+  checkIfVoted: async (voterId: string, electionId: string): Promise<Vote | null> => {
+    const vote = await db.query.votes.findFirst({
+      where: and(
+        eq(votes.voterId, voterId),
+        eq(votes.electionId, electionId)
+      ),
+    });
+    return vote || null;
+  }
 };

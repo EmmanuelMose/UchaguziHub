@@ -20,7 +20,6 @@ const CastVote = () => {
   /* Load positions and candidates when election changes */
   useEffect(() => {
     if (!electionId) return;
-
     setPositions([]);
     setCandidatesMap({});
     setSelectedVotes({});
@@ -37,7 +36,6 @@ const CastVote = () => {
       CastVoteAPI.getPositionsByElection(electionId).then(async (res) => {
         if (!res.success) return;
         setPositions(res.data);
-
         const map: Record<string, any[]> = {};
         await Promise.all(
           res.data.map(async (position: any) => {
@@ -69,7 +67,7 @@ const CastVote = () => {
           return;
         }
       }
-      alert("Vote cast successfully ✅");
+      alert("Vote cast successfully");
       setSelectedVotes({});
       setAlreadyVoted(true);
     } catch (err: any) {

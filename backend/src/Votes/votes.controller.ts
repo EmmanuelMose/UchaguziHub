@@ -33,7 +33,6 @@ export const createVoteController = async (req: Request, res: Response) => {
     const createdVote = await votesService.create(data);
     res.status(201).json({ success: true, data: createdVote });
   } catch (err: any) {
-    // Error can be: "You have already voted in this election."
     res.status(400).json({ success: false, message: err.message });
   }
 };
@@ -46,5 +45,20 @@ export const deleteVoteController = async (req: Request, res: Response) => {
     res.json({ success: true, data: deleted });
   } catch (err: any) {
     res.status(400).json({ success: false, message: err.message });
+  }
+};
+
+// Check if voter already voted
+export const checkIfVotedController = async (req: Request, res: Response) => {
+  try {
+    const { voterId, electionId } = req.query;
+    if (!voterId || !electionId) {
+      return res.status(400).json({ success: false, message: "Missing voterId or electionId" });
+    }
+
+    const vote = await votesService.checkIfVoted(voterId as string, electionId as string);
+    res.json({ success: true, data: vote ? [vote] : [] });
+  } catch (err: any) {
+    res.status(500).json({ success: false, message: err.message });
   }
 };

@@ -31,7 +31,9 @@ export const CastVoteAPI = {
   },
 
   checkIfVoted: async (voterId: string, electionId: string) => {
-    const res = await fetch(`${ApiDomain}/api/votes?voterId=${voterId}&electionId=${electionId}`);
+    const res = await fetch(
+      `${ApiDomain}/api/votes/check?voterId=${voterId}&electionId=${electionId}`
+    );
     return res.json();
-  }
+  },
 };
