@@ -3,105 +3,148 @@ import { CastVoteAPI } from "../../../../Features/castVote/castVoteAPI";
 
 const CastVote = () => {
   const user = JSON.parse(localStorage.getItem("user") || "{}");
-
   const [elections, setElections] = useState<any[]>([]);
   const [positions, setPositions] = useState<any[]>([]);
-  const [candidates, setCandidates] = useState<any[]>([]);
-
+  const [candidatesMap, setCandidatesMap] = useState<Record<string, any[]>>({});
+  const [selectedVotes, setSelectedVotes] = useState<Record<string, string>>({});
   const [electionId, setElectionId] = useState("");
-  const [positionId, setPositionId] = useState("");
-  const [candidateId, setCandidateId] = useState("");
+  const [alreadyVoted, setAlreadyVoted] = useState(false);
 
+  /* Load elections */
   useEffect(() => {
     CastVoteAPI.getElections().then((res) => {
       if (res.success) setElections(res.data);
     });
   }, []);
 
+  /* Load positions and candidates when election changes */
   useEffect(() => {
     if (!electionId) return;
 
-    CastVoteAPI.getPositionsByElection(electionId).then((res) => {
-      if (res.success) setPositions(res.data);
+    setPositions([]);
+    setCandidatesMap({});
+    setSelectedVotes({});
+    setAlreadyVoted(false);
+
+    // Check if user has already voted in this election
+    CastVoteAPI.checkIfVoted(user.userId, electionId).then((res) => {
+      if (res.success && res.data.length > 0) {
+        setAlreadyVoted(true);
+        return;
+      }
+
+      // Load positions and candidates if not voted
+      CastVoteAPI.getPositionsByElection(electionId).then(async (res) => {
+        if (!res.success) return;
+        setPositions(res.data);
+
+        const map: Record<string, any[]> = {};
+        await Promise.all(
+          res.data.map(async (position: any) => {
+            const cRes = await CastVoteAPI.getCandidatesByPosition(position.positionId);
+            if (cRes.success) map[position.positionId] = cRes.data;
+          })
+        );
+        setCandidatesMap(map);
+      });
     });
   }, [electionId]);
 
-  useEffect(() => {
-    if (!positionId) return;
-
-    CastVoteAPI.getCandidatesByPosition(positionId).then((res) => {
-      if (res.success) setCandidates(res.data);
-    });
-  }, [positionId]);
+  const handleSelectCandidate = (positionId: string, candidateId: string) => {
+    setSelectedVotes((prev) => ({ ...prev, [positionId]: candidateId }));
+  };
 
   const submitVote = async () => {
-    const res = await CastVoteAPI.castVote({
-      voterId: user.userId,
-      candidateId,
-      electionId,
-      positionId,
-    });
+    try {
+      for (const positionId in selectedVotes) {
+        const res = await CastVoteAPI.castVote({
+          voterId: user.userId,
+          electionId,
+          positionId,
+          candidateId: selectedVotes[positionId],
+        });
 
-    if (res.success) {
-      alert("Vote cast successfully ");
-      setCandidateId("");
-    } else {
-      alert(res.message);
+        if (!res.success) {
+          alert(res.message);
+          return;
+        }
+      }
+      alert("Vote cast successfully ✅");
+      setSelectedVotes({});
+      setAlreadyVoted(true);
+    } catch (err: any) {
+      alert(err.message || "Something went wrong while casting your vote.");
     }
   };
 
   return (
-    <div className="p-6 max-w-xl">
-      <h1 className="text-2xl font-bold mb-6">Cast Your Vote</h1>
+    <div className="p-6 max-w-6xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-center">Cast Your Vote</h1>
 
-      <select
-        className="select select-bordered w-full mb-4"
-        value={electionId}
-        onChange={(e) => setElectionId(e.target.value)}
-      >
-        <option value="">Select Election</option>
-        {elections.map((e) => (
-          <option key={e.electionId} value={e.electionId}>
-            {e.title}
-          </option>
-        ))}
-      </select>
+      {/* Election Select */}
+      <div className="max-w-md mx-auto mb-8">
+        <select
+          className="select select-bordered w-full"
+          value={electionId}
+          onChange={(e) => setElectionId(e.target.value)}
+        >
+          <option value="">Select Election</option>
+          {elections.map((e) => (
+            <option key={e.electionId} value={e.electionId}>
+              {e.title}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      <select
-        className="select select-bordered w-full mb-4"
-        value={positionId}
-        onChange={(e) => setPositionId(e.target.value)}
-        disabled={!electionId}
-      >
-        <option value="">Select Position</option>
-        {positions.map((p) => (
-          <option key={p.positionId} value={p.positionId}>
-            {p.name}
-          </option>
-        ))}
-      </select>
+      {alreadyVoted && (
+        <div className="text-center text-red-500 font-bold mb-6">
+          You have already voted in this election.
+        </div>
+      )}
 
-      <select
-        className="select select-bordered w-full mb-6"
-        value={candidateId}
-        onChange={(e) => setCandidateId(e.target.value)}
-        disabled={!positionId}
-      >
-        <option value="">Select Candidate</option>
-        {candidates.map((c) => (
-          <option key={c.candidateId} value={c.candidateId}>
-            {c.faculty ?? "Candidate"}
-          </option>
-        ))}
-      </select>
+      {/* Positions grid */}
+      {positions.length > 0 && !alreadyVoted && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {positions.map((position) => (
+            <div key={position.positionId} className="card bg-base-100 shadow-md border">
+              <div className="card-body">
+                <h2 className="card-title mb-4">{position.name}</h2>
+                <div className="space-y-3">
+                  {(candidatesMap[position.positionId] || []).map((candidate) => (
+                    <label
+                      key={candidate.candidateId}
+                      className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-base-200 transition"
+                    >
+                      <input
+                        type="radio"
+                        name={position.positionId}
+                        className="radio radio-primary"
+                        checked={selectedVotes[position.positionId] === candidate.candidateId}
+                        onChange={() => handleSelectCandidate(position.positionId, candidate.candidateId)}
+                      />
+                      <span className="font-medium">{candidate.faculty ?? "Candidate"}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-      <button
-        className="btn btn-primary w-full"
-        disabled={!candidateId}
-        onClick={submitVote}
-      >
-        Submit Vote
-      </button>
+      {/* Submit */}
+      {positions.length > 0 && !alreadyVoted && (
+        <div className="mt-10 text-center">
+          <button
+            className="btn btn-primary px-12"
+            disabled={Object.keys(selectedVotes).length === 0}
+            onClick={submitVote}
+          >
+            Submit Vote
+          </button>
+        </div>
+      )}
     </div>
   );
 };

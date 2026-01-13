@@ -7,16 +7,12 @@ export const CastVoteAPI = {
   },
 
   getPositionsByElection: async (electionId: string) => {
-    const res = await fetch(
-      `${ApiDomain}/api/positions/election/${electionId}`
-    );
+    const res = await fetch(`${ApiDomain}/api/positions/election/${electionId}`);
     return res.json();
   },
 
   getCandidatesByPosition: async (positionId: string) => {
-    const res = await fetch(
-      `${ApiDomain}/api/candidates/position/${positionId}`
-    );
+    const res = await fetch(`${ApiDomain}/api/candidates/position/${positionId}`);
     return res.json();
   },
 
@@ -28,12 +24,14 @@ export const CastVoteAPI = {
   }) => {
     const res = await fetch(`${ApiDomain}/api/votes`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-
     return res.json();
   },
+
+  checkIfVoted: async (voterId: string, electionId: string) => {
+    const res = await fetch(`${ApiDomain}/api/votes?voterId=${voterId}&electionId=${electionId}`);
+    return res.json();
+  }
 };

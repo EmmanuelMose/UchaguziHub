@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { votesService, NewVote } from "./votes.service";
 
+// Get all votes
 export const getAllVotesController = async (_req: Request, res: Response) => {
   try {
     const data = await votesService.getAll();
@@ -10,6 +11,7 @@ export const getAllVotesController = async (_req: Request, res: Response) => {
   }
 };
 
+// Get a vote by ID
 export const getVoteByIdController = async (req: Request, res: Response) => {
   try {
     const data = await votesService.getById(req.params.id);
@@ -20,19 +22,23 @@ export const getVoteByIdController = async (req: Request, res: Response) => {
   }
 };
 
+// Create a vote
 export const createVoteController = async (req: Request, res: Response) => {
   try {
     const data: NewVote = req.body;
     if (!data.voterId || !data.candidateId || !data.electionId || !data.positionId) {
       return res.status(400).json({ success: false, message: "All fields are required" });
     }
+
     const createdVote = await votesService.create(data);
     res.status(201).json({ success: true, data: createdVote });
   } catch (err: any) {
+    // Error can be: "You have already voted in this election."
     res.status(400).json({ success: false, message: err.message });
   }
 };
 
+// Delete a vote
 export const deleteVoteController = async (req: Request, res: Response) => {
   try {
     const deleted = await votesService.delete(req.params.id);
