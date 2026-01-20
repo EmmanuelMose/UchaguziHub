@@ -1,17 +1,17 @@
 import {
   pgTable,
-  uuid,
+  serial,
   varchar,
   text,
   timestamp,
   boolean,
   uniqueIndex,
-  index
+  index,
+  integer
 } from "drizzle-orm/pg-core";
 
-
 export const systemUsers = pgTable("system_users", {
-  systemUserId: uuid("system_user_id").defaultRandom().primaryKey(),
+  systemUserId: serial("system_user_id").primaryKey(),
   fullName: varchar("full_name", { length: 150 }).notNull(),
   email: varchar("email", { length: 150 }).notNull().unique(),
   registrationNumber: varchar("registration_number", { length: 50 }),
@@ -21,12 +21,12 @@ export const systemUsers = pgTable("system_users", {
 });
 
 export const users = pgTable("users", {
-  userId: uuid("user_id").defaultRandom().primaryKey(),
-  systemUserId: uuid("system_user_id")
+  userId: serial("user_id").primaryKey(),
+  systemUserId: integer("system_user_id")
     .references(() => systemUsers.systemUserId, { onDelete: "cascade" })
     .notNull(),
-  fullName: varchar("full_name", { length: 150 }).notNull(), 
-  registrationNumber: varchar("registration_number", { length: 50 }), 
+  fullName: varchar("full_name", { length: 150 }).notNull(),
+  registrationNumber: varchar("registration_number", { length: 50 }),
   email: varchar("email", { length: 150 }).notNull().unique(),
   role: varchar("role", { length: 30 }).notNull(),
   passwordHash: text("password_hash").notNull(),
@@ -36,22 +36,23 @@ export const users = pgTable("users", {
   isVerified: boolean("is_verified").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull()
 });
+
 export const elections = pgTable("elections", {
-  electionId: uuid("election_id").defaultRandom().primaryKey(),
+  electionId: serial("election_id").primaryKey(),
   title: varchar("title", { length: 200 }).notNull(),
   description: text("description"),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
-  status: varchar("status", { length: 30 }).notNull().default("Upcoming"),
-  createdBy: uuid("created_by")
-    .references(() => users.userId)
+  status: varchar("status", { length: 30 }).default("Upcoming").notNull(),
+  createdBy: integer("created_by")
+    .references(() => users.userId, { onDelete: "cascade" })
     .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull()
 });
 
 export const positions = pgTable("positions", {
-  positionId: uuid("position_id").defaultRandom().primaryKey(),
-  electionId: uuid("election_id")
+  positionId: serial("position_id").primaryKey(),
+  electionId: integer("election_id")
     .references(() => elections.electionId, { onDelete: "cascade" })
     .notNull(),
   name: varchar("name", { length: 100 }).notNull(),
@@ -59,14 +60,14 @@ export const positions = pgTable("positions", {
 });
 
 export const candidates = pgTable("candidates", {
-  candidateId: uuid("candidate_id").defaultRandom().primaryKey(),
-  userId: uuid("user_id")
+  candidateId: serial("candidate_id").primaryKey(),
+  userId: integer("user_id")
     .references(() => users.userId, { onDelete: "cascade" })
     .notNull(),
-  electionId: uuid("election_id")
+  electionId: integer("election_id")
     .references(() => elections.electionId, { onDelete: "cascade" })
     .notNull(),
-  positionId: uuid("position_id")
+  positionId: integer("position_id")
     .references(() => positions.positionId, { onDelete: "cascade" })
     .notNull(),
   faculty: varchar("faculty", { length: 100 }),
@@ -77,17 +78,17 @@ export const candidates = pgTable("candidates", {
 export const votes = pgTable(
   "votes",
   {
-    voteId: uuid("vote_id").defaultRandom().primaryKey(),
-    voterId: uuid("voter_id")
+    voteId: serial("vote_id").primaryKey(),
+    voterId: integer("voter_id")
       .references(() => users.userId, { onDelete: "cascade" })
       .notNull(),
-    candidateId: uuid("candidate_id")
+    candidateId: integer("candidate_id")
       .references(() => candidates.candidateId, { onDelete: "cascade" })
       .notNull(),
-    electionId: uuid("election_id")
+    electionId: integer("election_id")
       .references(() => elections.electionId, { onDelete: "cascade" })
       .notNull(),
-    positionId: uuid("position_id")
+    positionId: integer("position_id")
       .references(() => positions.positionId, { onDelete: "cascade" })
       .notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull()
@@ -101,13 +102,10 @@ export const votes = pgTable(
 );
 
 export const complaints = pgTable("complaints", {
-  complaintId: uuid("complaint_id").defaultRandom().primaryKey(),
-
-  userId: uuid("user_id")
+  complaintId: serial("complaint_id").primaryKey(),
+  userId: integer("user_id")
     .references(() => users.userId, { onDelete: "cascade" })
     .notNull(),
-
   complaint: text("complaint").notNull(),
-
   createdAt: timestamp("created_at").defaultNow().notNull()
 });
