@@ -33,9 +33,13 @@ const Login = () => {
 
       const res = await axios.post(`${ApiDomain}/api/auth/login`, payload);
 
-      if (res.data.success && res.data.token) {
-        // Create a user object using the role returned by backend
-        const user = { role: res.data.role };
+      if (res.data.success && res.data.token && res.data.userId) {
+        // ✅ Save full user info
+        const user = {
+          userId: res.data.userId,
+          role: res.data.role,
+          email: res.data.email
+        };
 
         // Dispatch to Redux
         dispatch(setUser(user));
@@ -97,10 +101,6 @@ const Login = () => {
               {...register("password", {
                 required: "Password is required",
                 minLength: { value: 8, message: "Minimum 8 characters" },
-                pattern: {
-                  value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])/,
-                  message: "Password must include uppercase, lowercase, number, special char",
-                },
               })}
               className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
