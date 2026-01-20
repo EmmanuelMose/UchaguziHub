@@ -23,33 +23,33 @@ export interface NewSystemUser {
 export const systemUsersService = {
   getAll: async (): Promise<SystemUser[]> => {
     const results = await db.query.systemUsers.findMany();
-    return results.map(u => ({ ...u, isActive: u.isActive ?? true }));
+    return results.map(u => ({ ...u, systemUserId: String(u.systemUserId), isActive: u.isActive ?? true }));
   },
 
   getById: async (id: string): Promise<SystemUser | null> => {
     const result = await db.query.systemUsers.findFirst({
-      where: eq(systemUsers.systemUserId, id),
+      where: eq(systemUsers.systemUserId, Number(id)),
     });
-    return result ? { ...result, isActive: result.isActive ?? true } : null;
+    return result ? { ...result, systemUserId: String(result.systemUserId), isActive: result.isActive ?? true } : null;
   },
 
   create: async (data: NewSystemUser): Promise<SystemUser> => {
     const [created] = await db.insert(systemUsers).values(data).returning();
-    return { ...created, isActive: created.isActive ?? true };
+    return { ...created, systemUserId: String(created.systemUserId), isActive: created.isActive ?? true };
   },
 
   update: async (id: string, data: Partial<NewSystemUser>): Promise<SystemUser | null> => {
     const [updated] = await db.update(systemUsers)
       .set(data)
-      .where(eq(systemUsers.systemUserId, id))
+      .where(eq(systemUsers.systemUserId, Number(id)))
       .returning();
-    return updated ? { ...updated, isActive: updated.isActive ?? true } : null;
+    return updated ? { ...updated, systemUserId: String(updated.systemUserId), isActive: updated.isActive ?? true } : null;
   },
 
   delete: async (id: string): Promise<SystemUser | null> => {
     const [deleted] = await db.delete(systemUsers)
-      .where(eq(systemUsers.systemUserId, id))
+      .where(eq(systemUsers.systemUserId, Number(id)))
       .returning();
-    return deleted ? { ...deleted, isActive: deleted.isActive ?? true } : null;
+    return deleted ? { ...deleted, systemUserId: String(deleted.systemUserId), isActive: deleted.isActive ?? true } : null;
   },
 };

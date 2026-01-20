@@ -9,7 +9,10 @@ export const ComplainService = {
   }) => {
     const [result] = await db
       .insert(complaints)
-      .values(data)
+      .values({
+        userId: parseInt(data.userId),
+        complaint: data.complaint,
+      })
       .returning();
     return result;
   },
@@ -22,13 +25,13 @@ export const ComplainService = {
     return db
       .select()
       .from(complaints)
-      .where(eq(complaints.userId, userId));
+      .where(eq(complaints.userId, parseInt(userId)));
   },
 
   deleteComplaint: async (complaintId: string) => {
     await db
       .delete(complaints)
-      .where(eq(complaints.complaintId, complaintId));
+      .where(eq(complaints.complaintId, parseInt(complaintId)));
     return true;
   }
 };

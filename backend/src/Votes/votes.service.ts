@@ -3,19 +3,19 @@ import { votes, users, candidates } from "../Drizzle/schema";
 import { and, eq } from "drizzle-orm";
 
 export interface Vote {
-  voteId: string;
-  voterId: string;
-  candidateId: string;
-  electionId: string;
-  positionId: string;
+  voteId: number;
+  voterId: number;
+  candidateId: number;
+  electionId: number;
+  positionId: number;
   createdAt: Date;
 }
 
 export interface NewVote {
-  voterId: string;
-  candidateId: string;
-  electionId: string;
-  positionId: string;
+  voterId: number;
+  candidateId: number;
+  electionId: number;
+  positionId: number;
 }
 
 export const votesService = {
@@ -27,7 +27,7 @@ export const votesService = {
   // Get vote by ID
   getById: async (id: string): Promise<Vote | null> => {
     const vote = await db.query.votes.findFirst({
-      where: eq(votes.voteId, id),
+      where: eq(votes.voteId, Number(id)),
     });
     return vote || null;
   },
@@ -65,7 +65,7 @@ export const votesService = {
   // Delete a vote
   delete: async (id: string): Promise<Vote | null> => {
     const [deleted] = await db.delete(votes)
-      .where(eq(votes.voteId, id))
+      .where(eq(votes.voteId, Number(id)))
       .returning();
     return deleted || null;
   },
@@ -74,8 +74,8 @@ export const votesService = {
   checkIfVoted: async (voterId: string, electionId: string): Promise<Vote | null> => {
     const vote = await db.query.votes.findFirst({
       where: and(
-        eq(votes.voterId, voterId),
-        eq(votes.electionId, electionId)
+        eq(votes.voterId, Number(voterId)),
+        eq(votes.electionId, Number(electionId))
       ),
     });
     return vote || null;

@@ -3,13 +3,13 @@ import { elections } from "../Drizzle/schema";
 import { eq } from "drizzle-orm";
 
 export interface Election {
-  electionId: string;
+  electionId: number;
   title: string;
   description: string | null;
   startDate: Date;
   endDate: Date;
   status: string;
-  createdBy: string;
+  createdBy: number;
   createdAt: Date;
 }
 
@@ -19,7 +19,7 @@ export interface NewElection {
   startDate: Date;
   endDate: Date;
   status?: string;
-  createdBy: string;
+  createdBy: number;
 }
 
 export const electionsService = {
@@ -27,7 +27,7 @@ export const electionsService = {
     return await db.query.elections.findMany();
   },
 
-  getById: async (id: string): Promise<Election | null> => {
+  getById: async (id: number): Promise<Election | null> => {
     const result = await db.query.elections.findFirst({
       where: eq(elections.electionId, id),
     });
@@ -52,7 +52,7 @@ export const electionsService = {
   return created;
 },
 
-  update: async (id: string, data: Partial<NewElection>): Promise<Election | null> => {
+  update: async (id: number, data: Partial<NewElection>): Promise<Election | null> => {
     const updateData: Partial<NewElection> = {
       ...data,
       startDate: data.startDate ? new Date(data.startDate) : undefined,
@@ -67,7 +67,7 @@ export const electionsService = {
     return updated || null;
   },
 
-  delete: async (id: string): Promise<Election | null> => {
+  delete: async (id: number): Promise<Election | null> => {
     const [deleted] = await db.delete(elections)
       .where(eq(elections.electionId, id))
       .returning();
