@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import axios from "axios";
 import { ApiDomain } from "../../utils/APIDomain";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 type ResetData = {
   password: string;
@@ -12,16 +13,30 @@ const ResetPassword = () => {
   const { state } = useLocation();
   const email = state?.email;
   const navigate = useNavigate();
+  const [error, setError] = useState("");
 
-  const { register, handleSubmit, watch, formState: { errors } } =
-    useForm<ResetData>();
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<ResetData>();
+
+  if (!email) {
+    navigate("/forgot-password"); // redirect if email not passed
+    return null;
+  }
 
   const onSubmit = async (data: ResetData) => {
-    await axios.post(`${ApiDomain}/api/auth/reset-password`, {
-      email,
-      password: data.password,
-    });
-    navigate("/login");
+    setError("");
+    if (data.password !== data.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    try {
+      await axios.post(`${ApiDomain}/api/auth/reset-password`, {
+        email,
+        password: data.password, // send plain password
+      });
+      navigate("/login");
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to reset password");
+    }
   };
 
   return (
@@ -36,9 +51,12 @@ const ResetPassword = () => {
             type="password"
             placeholder="New Password"
             {...register("password", {
-              required: true,
-              minLength: 8,
-              pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])/,
+              required: "Password is required",
+              minLength: { value: 8, message: "Minimum 8 characters" },
+              pattern: {
+                value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])/,
+                message: "Password must include uppercase, number & special char",
+              },
             })}
             className="w-full px-4 py-2 border rounded-lg"
           />
@@ -53,9 +71,9 @@ const ResetPassword = () => {
             className="w-full px-4 py-2 border rounded-lg"
           />
 
-          {errors.confirmPassword && (
-            <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>
-          )}
+          {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+          {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
+          {error && <p className="text-red-500 text-center">{error}</p>}
 
           <button className="w-full bg-blue-700 text-white py-2 rounded-lg hover:bg-blue-800">
             Reset Password

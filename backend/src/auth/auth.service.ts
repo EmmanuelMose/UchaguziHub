@@ -10,8 +10,7 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 const generateCode = () =>
   Math.floor(100000 + Math.random() * 900000).toString();
 
-
-
+// -------------------- Register --------------------
 export const registerService = async (
   fullName: string,
   email: string,
@@ -61,10 +60,9 @@ export const registerService = async (
   );
 };
 
+// -------------------- Verify --------------------
 export const verifyService = async (email: string, code: string) => {
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
+  const user = await db.query.users.findFirst({ where: eq(users.email, email) });
 
   if (!user || user.verificationCode !== code) {
     throw new Error("Invalid verification code");
@@ -75,15 +73,14 @@ export const verifyService = async (email: string, code: string) => {
     .where(eq(users.userId, user.userId));
 };
 
+// -------------------- Login --------------------
 export const loginService = async (email: string, password: string) => {
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
+  const user = await db.query.users.findFirst({ where: eq(users.email, email) });
 
   if (!user) throw new Error("User not registered");
   if (!user.isVerified) throw new Error("Account not verified");
 
-  const match = await bcrypt.compare(password, user.passwordHash);
+  const match = await bcrypt.compare(password.trim(), user.passwordHash);
   if (!match) throw new Error("Invalid credentials");
 
   const token = jwt.sign(
@@ -92,22 +89,24 @@ export const loginService = async (email: string, password: string) => {
     { expiresIn: "1d" }
   );
 
-  return { token, role: user.role };
+  return {
+    token,
+    role: user.role,
+    userId: user.userId,
+    email: user.email
+  };
 };
 
-
-
+// -------------------- Forgot Password --------------------
 export const forgotPasswordService = async (email: string) => {
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
+  const user = await db.query.users.findFirst({ where: eq(users.email, email) });
 
   if (!user || !user.isVerified) {
     throw new Error("User not found or not verified");
   }
 
   const resetCode = generateCode();
-  const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
   await db.update(users)
     .set({ resetCode, resetCodeExpiresAt: expiresAt })
@@ -121,10 +120,9 @@ export const forgotPasswordService = async (email: string) => {
   );
 };
 
+// -------------------- Verify Reset Code --------------------
 export const verifyResetCodeService = async (email: string, code: string) => {
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
+  const user = await db.query.users.findFirst({ where: eq(users.email, email) });
 
   if (
     !user ||
@@ -136,16 +134,14 @@ export const verifyResetCodeService = async (email: string, code: string) => {
   }
 };
 
-
-
+// -------------------- Reset Password --------------------
 export const resetPasswordService = async (email: string, password: string) => {
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email),
-  });
+  if (!email) throw new Error("Email is required");
 
+  const user = await db.query.users.findFirst({ where: eq(users.email, email) });
   if (!user) throw new Error("User not found");
 
-  const passwordHash = await bcrypt.hash(password, 10);
+  const passwordHash = await bcrypt.hash(password.trim(), 10);
 
   await db.update(users)
     .set({
@@ -154,4 +150,6 @@ export const resetPasswordService = async (email: string, password: string) => {
       resetCodeExpiresAt: null,
     })
     .where(eq(users.userId, user.userId));
+
+  console.log(`Password updated successfully for userId=${user.userId}`);
 };

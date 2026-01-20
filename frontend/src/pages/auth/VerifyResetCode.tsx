@@ -15,7 +15,13 @@ const VerifyResetCode = () => {
   const { register, handleSubmit, formState: { errors } } = useForm<CodeData>();
   const [error, setError] = useState("");
 
+  if (!email) {
+    navigate("/forgot-password"); // redirect if email not passed
+    return null;
+  }
+
   const onSubmit = async (data: CodeData) => {
+    setError("");
     try {
       await axios.post(`${ApiDomain}/api/auth/verify-reset-code`, {
         email,

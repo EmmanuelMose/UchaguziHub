@@ -16,13 +16,15 @@ const ForgotPassword = () => {
 
   const onSubmit = async (data: ForgotData) => {
     setLoading(true);
+    setError("");
     try {
       await axios.post(`${ApiDomain}/api/auth/forgot-password`, data);
       navigate("/verify-reset-code", { state: { email: data.email } });
     } catch (err: any) {
       setError(err.response?.data?.message || "User not found");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

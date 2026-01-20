@@ -8,6 +8,7 @@ import {
   resetPasswordService
 } from "./auth.service";
 
+// -------------------- Register --------------------
 export const registerUserController = async (req: Request, res: Response) => {
   try {
     const { fullName, email, registrationNumber, password } = req.body;
@@ -18,6 +19,7 @@ export const registerUserController = async (req: Request, res: Response) => {
   }
 };
 
+// -------------------- Verify --------------------
 export const verifyUserController = async (req: Request, res: Response) => {
   try {
     const { email, code } = req.body;
@@ -28,16 +30,21 @@ export const verifyUserController = async (req: Request, res: Response) => {
   }
 };
 
+// -------------------- Login --------------------
 export const loginUserController = async (req: Request, res: Response) => {
+  console.log("Login attempt:", req.body);
   try {
     const { email, password } = req.body;
     const data = await loginService(email, password);
+    console.log("Login success:", data);
     res.json({ success: true, ...data });
   } catch (e: any) {
+    console.error("Login error:", e.message);
     res.status(400).json({ success: false, message: e.message });
   }
 };
 
+// -------------------- Forgot Password --------------------
 export const forgotPasswordController = async (req: Request, res: Response) => {
   try {
     await forgotPasswordService(req.body.email);
@@ -47,6 +54,7 @@ export const forgotPasswordController = async (req: Request, res: Response) => {
   }
 };
 
+// -------------------- Verify Reset Code --------------------
 export const verifyResetCodeController = async (req: Request, res: Response) => {
   try {
     const { email, code } = req.body;
@@ -57,11 +65,12 @@ export const verifyResetCodeController = async (req: Request, res: Response) => 
   }
 };
 
+// -------------------- Reset Password --------------------
 export const resetPasswordController = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     await resetPasswordService(email, password);
-    res.json({ success: true });
+    res.json({ success: true, message: "Password reset successfully" });
   } catch (e: any) {
     res.status(400).json({ success: false, message: e.message });
   }

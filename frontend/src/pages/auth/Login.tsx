@@ -33,37 +33,32 @@ const Login = () => {
 
       const res = await axios.post(`${ApiDomain}/api/auth/login`, payload);
 
-      if (res.data.success && res.data.token && res.data.userId) {
-        // ✅ Save full user info
+      if (res.data.success && res.data.token) {
+        // Save full user info from backend response
         const user = {
           userId: res.data.userId,
           role: res.data.role,
           email: res.data.email
         };
 
-        // Dispatch to Redux
+        // Save to Redux
         dispatch(setUser(user));
 
-        // Persist in localStorage
+        // Save to localStorage
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("token", res.data.token);
 
         // Navigate based on role
-        switch (user.role.trim()) {
-          case "Admin":
-            navigate("/admin-dashboard");
-            break;
-          case "ElectionOfficer":
-            navigate("/officer-dashboard");
-            break;
-          default:
-            navigate("/user-dashboard");
-            break;
-        }
+        const role = res.data.role.trim();
+        if (role === "Admin") navigate("/admin-dashboard");
+        else if (role === "ElectionOfficer") navigate("/officer-dashboard");
+        else if (role === "Student") navigate("/user-dashboard"); // For students
+        else navigate("/user-dashboard"); // Default fallback
       } else {
         setServerError(res.data.message || "Invalid login credentials");
       }
     } catch (error: any) {
+      console.error("Login error:", error.response?.data?.message || error.message);
       setServerError(error.response?.data?.message || "Server error");
     }
 
