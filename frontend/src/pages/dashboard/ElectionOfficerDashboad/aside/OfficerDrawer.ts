@@ -10,22 +10,16 @@ export type DrawerData = {
 
 export const userDrawerData: DrawerData[] = [
   {
-    id: "Users",
-    name: "users",
+    id: "Candidate",
+    name: "candidate",
     icon: AiOutlineCheckCircle,
-    link: "users",
+    link: "candidate",
   },
   {
-    id: "ElectionOfficer",
-    name: "ElectionOfficer",
+    id: "election",
+    name: "election",
     icon: AiOutlineMessage,
-    link: "electionofficer",
-  },
-  {
-    id: "Reports",
-    name: "reports",
-    icon: AiOutlineBarChart,
-    link: "reports",
+    link: "election",
   },
   {
     id: "viewResults",
