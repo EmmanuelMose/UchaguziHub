@@ -1,20 +1,10 @@
 import { Router } from "express";
-import {
-  getAllVotesController,
-  getVoteByIdController,
-  createVoteController,
-  deleteVoteController,
-  checkIfVotedController
-} from "./votes.controller";
+import { VotesController } from "../Votes/votes.controller";
 
 const votesRouter = Router();
 
-votesRouter.get("/", getAllVotesController);
-votesRouter.get("/:id", getVoteByIdController);
-votesRouter.post("/", createVoteController);
-votesRouter.delete("/:id", deleteVoteController);
-
-// New endpoint for checking if user already voted
-votesRouter.get("/check", checkIfVotedController);
+votesRouter.post("/", VotesController.castVote);
+votesRouter.get("/positions/:electionId", VotesController.getPositions);
+votesRouter.get("/candidates/:positionId", VotesController.getCandidates);
 
 export default votesRouter;

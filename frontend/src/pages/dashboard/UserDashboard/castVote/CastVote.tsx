@@ -1,181 +1,104 @@
 import { useEffect, useState } from "react";
-import { CastVoteAPI } from "../../../../Features/castVote/castVoteAPI";
+import { CastVoteAPI, type Election, type Position, type Candidate } from "../../../../Features/castVote/castVoteAPI";
 import { motion } from "framer-motion";
+import { IoArrowForward } from "react-icons/io5";
 
 const CastVote = () => {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const [elections, setElections] = useState<any[]>([]);
-  const [positions, setPositions] = useState<any[]>([]);
-  const [candidatesMap, setCandidatesMap] = useState<Record<string, any[]>>({});
-  const [selectedVotes, setSelectedVotes] = useState<Record<string, string>>({});
-  const [electionId, setElectionId] = useState("");
-  const [alreadyVoted, setAlreadyVoted] = useState(false);
+  const [elections, setElections] = useState<Election[]>([]);
+  const [selectedElection, setSelectedElection] = useState<number | null>(null);
+  const [positions, setPositions] = useState<Position[]>([]);
+  const [currentPositionIndex, setCurrentPositionIndex] = useState(0);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [votes, setVotes] = useState<{ [positionId: number]: number }>({});
   const [loading, setLoading] = useState(false);
 
-  // Load elections
+  const voterId = 1;
+
   useEffect(() => {
-    CastVoteAPI.getElections().then((res) => {
-      if (res.success) setElections(res.data);
-    });
+    const fetchElections = async () => {
+      const data = await CastVoteAPI.getElections();
+      setElections(data);
+    };
+    fetchElections();
   }, []);
 
-  // Load positions and candidates when election changes
   useEffect(() => {
-    if (!electionId) return;
-    setPositions([]);
-    setCandidatesMap({});
-    setSelectedVotes({});
-    setAlreadyVoted(false);
+    if (!selectedElection) return;
     setLoading(true);
+    const fetchPositions = async () => {
+      const data = await CastVoteAPI.getPositions(selectedElection);
+      setPositions(data);
+      setCurrentPositionIndex(0);
+      setLoading(false);
+    };
+    fetchPositions();
+  }, [selectedElection]);
 
-    // Check if user already voted
-    CastVoteAPI.checkIfVoted(user.userId, electionId).then((res) => {
-      if (res.success && res.data.length > 0) {
-        setAlreadyVoted(true);
-        setLoading(false);
-        return;
-      }
+  useEffect(() => {
+    if (positions.length === 0) return;
+    setLoading(true);
+    const fetchCandidates = async () => {
+      const data = await CastVoteAPI.getCandidates(positions[currentPositionIndex].positionId);
+      setCandidates(data);
+      setLoading(false);
+    };
+    fetchCandidates();
+  }, [positions, currentPositionIndex]);
 
-      // Load positions and candidates if not voted
-      CastVoteAPI.getPositionsByElection(electionId).then(async (res) => {
-        if (!res.success) {
-          setLoading(false);
-          return;
-        }
+  const handleNext = () => setCurrentPositionIndex(prev => (prev + 1 < positions.length ? prev + 1 : prev));
+  const handleVoteSelect = (candidateId: number) => setVotes({ ...votes, [positions[currentPositionIndex].positionId]: candidateId });
 
-        setPositions(res.data);
-        const map: Record<string, any[]> = {};
-        await Promise.all(
-          res.data.map(async (position: any) => {
-            const cRes = await CastVoteAPI.getCandidatesByPosition(position.positionId);
-            if (cRes.success) map[position.positionId] = cRes.data;
-          })
-        );
-        setCandidatesMap(map);
-        setLoading(false);
-      });
-    });
-  }, [electionId]);
-
-  const handleSelectCandidate = (positionId: string, candidateId: string) => {
-    setSelectedVotes((prev) => ({ ...prev, [positionId]: candidateId }));
-  };
-
-  const submitVote = async () => {
-    if (Object.keys(selectedVotes).length !== positions.length) {
-      alert("Please vote for all positions before submitting.");
-      return;
-    }
-
+  const handleSubmit = async () => {
     try {
-      for (const positionId in selectedVotes) {
-        const res = await CastVoteAPI.castVote({
-          voterId: user.userId,
-          electionId,
-          positionId,
-          candidateId: selectedVotes[positionId],
-        });
-
-        if (!res.success) {
-          alert(res.message);
-          return;
-        }
+      for (const position of positions) {
+        await CastVoteAPI.castVote(voterId, votes[position.positionId], selectedElection!, position.positionId);
       }
-      alert("Vote cast successfully!");
-      setSelectedVotes({});
-      setAlreadyVoted(true);
-    } catch (err: any) {
-      alert(err.message || "Something went wrong while casting your vote.");
+      alert("Votes submitted successfully!");
+      setVotes({});
+      setSelectedElection(null);
+      setPositions([]);
+      setCandidates([]);
+      setCurrentPositionIndex(0);
+    } catch {
+      alert("Error submitting votes");
     }
   };
+
+  const allPositionsVoted = positions.length > 0 && positions.every(p => votes[p.positionId]);
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
-      <h1 className="text-4xl font-extrabold mb-8 text-center text-gradient bg-clip-text text-transparent bg-gradient-to-r from-purple-500 to-pink-500">
-        Cast Your Vote
-      </h1>
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">Cast Your Vote</h2>
+      <select value={selectedElection ?? ""} onChange={e => setSelectedElection(Number(e.target.value))} className="mb-6 w-full p-3 border rounded">
+        <option value="" disabled>Select an election</option>
+        {elections.map(el => <option key={el.electionId} value={el.electionId}>{el.title}</option>)}
+      </select>
 
-      {/* Election Selector */}
-      <div className="max-w-md mx-auto mb-8">
-        <select
-          className="select select-bordered w-full shadow-lg transition duration-300 hover:scale-105"
-          value={electionId}
-          onChange={(e) => setElectionId(e.target.value)}
-        >
-          <option value="">Select Election</option>
-          {elections.map((e) => (
-            <option key={e.electionId} value={e.electionId}>
-              {e.title}
-            </option>
-          ))}
-        </select>
-      </div>
+      {loading && <p className="text-blue-600 animate-pulse">Loading...</p>}
 
-      {loading && (
-        <div className="text-center text-gray-500 font-medium animate-pulse mb-6">
-          Loading election data...
-        </div>
-      )}
+      {!loading && positions.length > 0 && candidates.length > 0 && (
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="bg-white p-6 rounded shadow">
+          <div className="flex justify-between mb-4">
+            <h3 className="text-xl font-semibold">{positions[currentPositionIndex].name}</h3>
+            {currentPositionIndex + 1 < positions.length && (
+              <button onClick={handleNext}><IoArrowForward size={24} /></button>
+            )}
+          </div>
 
-      {alreadyVoted && (
-        <div className="text-center text-red-500 font-bold mb-6 animate-bounce">
-          You have already voted in this election.
-        </div>
-      )}
-
-      {/* Positions and Candidates */}
-      {positions.length > 0 && !alreadyVoted && (
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          {positions.map((position) => (
-            <motion.div
-              key={position.positionId}
-              className="card bg-white shadow-xl border rounded-lg hover:shadow-2xl transition-all"
-              whileHover={{ scale: 1.03 }}
-            >
-              <div className="card-body">
-                <h2 className="card-title text-xl font-semibold mb-4">{position.name}</h2>
-                <div className="space-y-3">
-                  {(candidatesMap[position.positionId] || []).map((candidate) => (
-                    <label
-                      key={candidate.candidateId}
-                      className="flex items-center gap-3 p-3 border rounded-lg cursor-pointer hover:bg-purple-50 transition-colors"
-                    >
-                      <input
-                        type="radio"
-                        name={position.positionId}
-                        className="radio radio-primary"
-                        checked={selectedVotes[position.positionId] === candidate.candidateId}
-                        onChange={() =>
-                          handleSelectCandidate(position.positionId, candidate.candidateId)
-                        }
-                      />
-                      <span className="font-medium">{candidate.faculty ?? candidate.name ?? "Candidate"}</span>
-                    </label>
-                  ))}
+          <div className="space-y-2">
+            {candidates.map(c => (
+              <label key={c.candidateId} className="flex items-center p-2 border rounded cursor-pointer">
+                <input type="radio" name={`position-${positions[currentPositionIndex].positionId}`} checked={votes[positions[currentPositionIndex].positionId] === c.candidateId} onChange={() => handleVoteSelect(c.candidateId)} className="mr-2"/>
+                <div>
+                  <p>{c.fullName}</p>
+                  {c.manifesto && <p className="text-sm text-gray-500">{c.manifesto}</p>}
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
+              </label>
+            ))}
+          </div>
 
-      {/* Submit Button */}
-      {positions.length > 0 && !alreadyVoted && (
-        <div className="mt-10 text-center">
-          <motion.button
-            className="btn btn-primary px-12 py-3 text-lg font-semibold shadow-lg hover:shadow-2xl hover:scale-105 transition-all"
-            disabled={Object.keys(selectedVotes).length === 0}
-            onClick={submitVote}
-            whileTap={{ scale: 0.95 }}
-          >
-            Submit Vote
-          </motion.button>
-        </div>
+          {allPositionsVoted && <button onClick={handleSubmit} className="mt-4 px-4 py-2 bg-blue-600 text-white rounded">Submit Votes</button>}
+        </motion.div>
       )}
     </div>
   );

@@ -1,64 +1,34 @@
 import { Request, Response } from "express";
-import { votesService, NewVote } from "./votes.service";
+import { VotesService } from "../Votes/votes.service";
 
-// Get all votes
-export const getAllVotesController = async (_req: Request, res: Response) => {
-  try {
-    const data = await votesService.getAll();
-    res.json({ success: true, data });
-  } catch (err: any) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-// Get a vote by ID
-export const getVoteByIdController = async (req: Request, res: Response) => {
-  try {
-    const data = await votesService.getById(req.params.id);
-    if (!data) return res.status(404).json({ success: false, message: "Vote not found" });
-    res.json({ success: true, data });
-  } catch (err: any) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-};
-
-// Create a vote
-export const createVoteController = async (req: Request, res: Response) => {
-  try {
-    const data: NewVote = req.body;
-    if (!data.voterId || !data.candidateId || !data.electionId || !data.positionId) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
+export class VotesController {
+  static async castVote(req: Request, res: Response) {
+    const { voterId, candidateId, electionId, positionId } = req.body;
+    try {
+      const vote = await VotesService.castVote(voterId, candidateId, electionId, positionId);
+      res.json({ message: "Vote cast successfully", vote });
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
     }
-
-    const createdVote = await votesService.create(data);
-    res.status(201).json({ success: true, data: createdVote });
-  } catch (err: any) {
-    res.status(400).json({ success: false, message: err.message });
   }
-};
 
-// Delete a vote
-export const deleteVoteController = async (req: Request, res: Response) => {
-  try {
-    const deleted = await votesService.delete(req.params.id);
-    if (!deleted) return res.status(404).json({ success: false, message: "Vote not found" });
-    res.json({ success: true, data: deleted });
-  } catch (err: any) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-};
-
-// Check if voter already voted
-export const checkIfVotedController = async (req: Request, res: Response) => {
-  try {
-    const { voterId, electionId } = req.query;
-    if (!voterId || !electionId) {
-      return res.status(400).json({ success: false, message: "Missing voterId or electionId" });
+  static async getPositions(req: Request, res: Response) {
+    const { electionId } = req.params;
+    try {
+      const positions = await VotesService.getPositionsByElection(Number(electionId));
+      res.json(positions);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
     }
-
-    const vote = await votesService.checkIfVoted(voterId as string, electionId as string);
-    res.json({ success: true, data: vote ? [vote] : [] });
-  } catch (err: any) {
-    res.status(500).json({ success: false, message: err.message });
   }
-};
+
+  static async getCandidates(req: Request, res: Response) {
+    const { positionId } = req.params;
+    try {
+      const candidates = await VotesService.getCandidatesByPosition(Number(positionId));
+      res.json(candidates);
+    } catch (err: any) {
+      res.status(400).json({ error: err.message });
+    }
+  }
+}

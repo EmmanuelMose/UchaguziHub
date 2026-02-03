@@ -1,83 +1,37 @@
 import db from "../Drizzle/db";
-import { votes, users, candidates } from "../Drizzle/schema";
-import { and, eq } from "drizzle-orm";
+import { votes, candidates, positions } from "../Drizzle/schema";
+import { eq, and } from "drizzle-orm";
 
-export interface Vote {
-  voteId: number;
-  voterId: number;
-  candidateId: number;
-  electionId: number;
-  positionId: number;
-  createdAt: Date;
-}
+export class VotesService {
+  static async castVote(voterId: number, candidateId: number, electionId: number, positionId: number) {
+    const existingVote = await db
+      .select()
+      .from(votes)
+      .where(
+        and(
+          eq(votes.voterId, voterId),
+          eq(votes.positionId, positionId),
+          eq(votes.electionId, electionId)
+        )
+      );
 
-export interface NewVote {
-  voterId: number;
-  candidateId: number;
-  electionId: number;
-  positionId: number;
-}
+    if (existingVote.length > 0) throw new Error("You have already voted for this position");
 
-export const votesService = {
-  // Get all votes
-  getAll: async (): Promise<Vote[]> => {
-    return await db.query.votes.findMany();
-  },
-
-  // Get vote by ID
-  getById: async (id: string): Promise<Vote | null> => {
-    const vote = await db.query.votes.findFirst({
-      where: eq(votes.voteId, Number(id)),
+    const inserted = await db.insert(votes).values({
+      voterId,
+      candidateId,
+      electionId,
+      positionId,
     });
-    return vote || null;
-  },
 
-  // Create a new vote
-  create: async (data: NewVote): Promise<Vote> => {
-    // Check voter exists
-    const voterExists = await db.query.users.findFirst({
-      where: eq(users.userId, data.voterId)
-    });
-    if (!voterExists) throw new Error("Voter does not exist.");
-
-    // Check candidate exists
-    const candidateExists = await db.query.candidates.findFirst({
-      where: eq(candidates.candidateId, data.candidateId)
-    });
-    if (!candidateExists) throw new Error("Candidate does not exist.");
-
-    // Prevent voting more than once in the same election
-    const existingElectionVote = await db.query.votes.findFirst({
-      where: and(
-        eq(votes.voterId, data.voterId),
-        eq(votes.electionId, data.electionId)
-      )
-    });
-    if (existingElectionVote) {
-      throw new Error("You have already voted in this election.");
-    }
-
-    // Create vote
-    const [created] = await db.insert(votes).values(data).returning();
-    return created;
-  },
-
-  // Delete a vote
-  delete: async (id: string): Promise<Vote | null> => {
-    const [deleted] = await db.delete(votes)
-      .where(eq(votes.voteId, Number(id)))
-      .returning();
-    return deleted || null;
-  },
-
-  // Check if a voter has voted in a specific election
-  checkIfVoted: async (voterId: string, electionId: string): Promise<Vote | null> => {
-    const vote = await db.query.votes.findFirst({
-      where: and(
-        eq(votes.voterId, Number(voterId)),
-        eq(votes.electionId, Number(electionId))
-      ),
-    });
-    return vote || null;
+    return inserted;
   }
-};
+
+  static async getPositionsByElection(electionId: number) {
+    return await db.select().from(positions).where(eq(positions.electionId, electionId));
+  }
+
+  static async getCandidatesByPosition(positionId: number) {
+    return await db.select().from(candidates).where(eq(candidates.positionId, positionId));
+  }
+}

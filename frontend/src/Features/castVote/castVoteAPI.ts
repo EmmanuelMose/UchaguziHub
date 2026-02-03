@@ -1,39 +1,28 @@
+import axios from "axios";
 import { ApiDomain } from "../../utils/APIDomain";
 
+export type Election = { electionId: number; title: string };
+export type Position = { positionId: number; name: string };
+export type Candidate = { candidateId: number; fullName: string; manifesto?: string };
+
 export const CastVoteAPI = {
-  getElections: async () => {
-    const res = await fetch(`${ApiDomain}/api/elections`);
-    return res.json();
+  getElections: async (): Promise<Election[]> => {
+    const res = await axios.get(`${ApiDomain}/api/elections`);
+    return Array.isArray(res.data) ? res.data : [];
   },
 
-  getPositionsByElection: async (electionId: string) => {
-    const res = await fetch(`${ApiDomain}/api/positions/election/${electionId}`);
-    return res.json();
+  getPositions: async (electionId: number): Promise<Position[]> => {
+    const res = await axios.get(`${ApiDomain}/api/votes/positions/${electionId}`);
+    return Array.isArray(res.data) ? res.data : [];
   },
 
-  getCandidatesByPosition: async (positionId: string) => {
-    const res = await fetch(`${ApiDomain}/api/candidates/position/${positionId}`);
-    return res.json();
+  getCandidates: async (positionId: number): Promise<Candidate[]> => {
+    const res = await axios.get(`${ApiDomain}/api/votes/candidates/${positionId}`);
+    return Array.isArray(res.data) ? res.data : [];
   },
 
-  castVote: async (payload: {
-    voterId: string;
-    candidateId: string;
-    electionId: string;
-    positionId: string;
-  }) => {
-    const res = await fetch(`${ApiDomain}/api/votes`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    return res.json();
-  },
-
-  checkIfVoted: async (voterId: string, electionId: string) => {
-    const res = await fetch(
-      `${ApiDomain}/api/votes/check?voterId=${voterId}&electionId=${electionId}`
-    );
-    return res.json();
+  castVote: async (voterId: number, candidateId: number, electionId: number, positionId: number) => {
+    const res = await axios.post(`${ApiDomain}/api/votes`, { voterId, candidateId, electionId, positionId });
+    return res.data;
   },
 };
