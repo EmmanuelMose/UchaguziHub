@@ -1,133 +1,154 @@
+// src/Features/analytics/Analytics.tsx
 import { useEffect, useState } from "react";
+import { AnalyticsAPI, type Election, type PositionResult } from "../../../../Features/analytics/AnalyticsAPI";
+import { motion } from "framer-motion";
 import {
+  BarChart,
+  Bar,
   PieChart,
   Pie,
   Cell,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
   ResponsiveContainer,
+  Legend,
 } from "recharts";
-import {fetchElectionResults} from "../../../../Features/analytics/AnalyticsAPI";
-import type { CandidateResult } from "../../../../Features/analytics/AnalyticsAPI";
+import { IoArrowForward } from "react-icons/io5";
 
-const COLORS = ["#2563eb", "#16a34a", "#dc2626", "#f59e0b", "#7c3aed"];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#f472b6"];
 
-const Analytics = ({ electionId }: { electionId: string }) => {
-  const [data, setData] = useState<CandidateResult[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+const Analytics = () => {
+  const [elections, setElections] = useState<Election[]>([]);
+  const [selectedElection, setSelectedElection] = useState<number | null>(null);
+  const [results, setResults] = useState<PositionResult[]>([]);
+  const [currentPositionIndex, setCurrentPositionIndex] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    const loadResults = async () => {
-      try {
-        const res = await fetchElectionResults(electionId);
-        setData(res.data || res);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+    const fetchElections = async () => {
+      const data = await AnalyticsAPI.getElections();
+      setElections(data);
     };
+    fetchElections();
+  }, []);
 
-    loadResults();
-  }, [electionId]);
+  useEffect(() => {
+    if (selectedElection === null) return;
+    setLoading(true);
+    const fetchResults = async () => {
+      const data = await AnalyticsAPI.getResults(selectedElection);
+      setResults(data);
+      setCurrentPositionIndex(0); // reset to first position
+      setLoading(false);
+    };
+    fetchResults();
+  }, [selectedElection]);
 
-  if (loading) {
-    return <p className="text-center">Loading analytics...</p>;
-  }
+  const handleNextPosition = () => {
+    setCurrentPositionIndex((prev) =>
+      prev + 1 < results.length ? prev + 1 : 0
+    );
+  };
 
-  if (error) {
-    return <p className="text-center text-red-600">{error}</p>;
-  }
+  const currentPosition = results[currentPositionIndex];
 
   return (
-    <div className="p-6 space-y-10">
-      <h2 className="text-3xl font-bold text-center">
-        Election Results Analytics
-      </h2>
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4 text-gray-800">Election Analytics</h2>
 
-      {/* ===== Pie Chart ===== */}
-      <div className="bg-white p-6 rounded shadow">
-        <h3 className="text-xl font-semibold mb-4 text-center">
-          Vote Distribution (Pie Chart)
-        </h3>
+      <select
+        value={selectedElection ?? ""}
+        onChange={(e) => setSelectedElection(Number(e.target.value))}
+        className="mb-6 w-full md:w-1/2 p-3 rounded-lg border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+      >
+        <option value="" disabled>
+          Select an election
+        </option>
+        {elections.map((el) => (
+          <option key={el.electionId} value={el.electionId}>
+            {el.title}
+          </option>
+        ))}
+      </select>
 
-        <ResponsiveContainer width="100%" height={350}>
-          <PieChart>
-            <Pie
-              data={data}
-              dataKey="voteCount"
-              nameKey="candidateName"
-              cx="50%"
-              cy="50%"
-              outerRadius={120}
-              label
-            >
-              {data.map((_, index) => (
-                <Cell
-                  key={index}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Tooltip />
-            <Legend />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+      {loading && <p className="text-blue-600 font-semibold animate-pulse">Loading analytics...</p>}
 
-      {/* ===== Bar Chart ===== */}
-      <div className="bg-white p-6 rounded shadow">
-        <h3 className="text-xl font-semibold mb-4 text-center">
-          Votes per Candidate (Bar Chart)
-        </h3>
+      {!loading && currentPosition && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white p-6 rounded-2xl shadow-lg transition-all hover:shadow-2xl mb-6"
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-semibold text-gray-700">{currentPosition.positionName}</h3>
+            {results.length > 1 && (
+              <button
+                onClick={handleNextPosition}
+                className="text-2xl text-gray-500 hover:text-gray-800 transition-transform hover:scale-110"
+              >
+                <IoArrowForward />
+              </button>
+            )}
+          </div>
 
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data}>
-            <XAxis dataKey="candidateName" />
-            <YAxis allowDecimals={false} />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="voteCount" fill="#2563eb" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gray-50 p-4 rounded-xl shadow-inner">
+              <h4 className="text-lg font-medium mb-2 text-gray-700">Votes - Bar Chart</h4>
+              <ResponsiveContainer width="100%" height={250}>
+                <BarChart
+                  data={currentPosition.candidates.map(c => ({
+                    name: c.fullName,
+                    votes: c.voteCount,
+                  }))}
+                  margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
+                >
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="votes" fill="#3b82f6">
+                    {currentPosition.candidates.map((_, idx) => (
+                      <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
 
-      {/* ===== Summary Table ===== */}
-      <div className="bg-white p-6 rounded shadow overflow-x-auto">
-        <h3 className="text-xl font-semibold mb-4 text-center">
-          Results Summary
-        </h3>
+            <div className="bg-gray-50 p-4 rounded-xl shadow-inner">
+              <h4 className="text-lg font-medium mb-2 text-gray-700">Votes - Pie Chart</h4>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={currentPosition.candidates.map(c => ({
+                      name: c.fullName,
+                      value: c.voteCount,
+                    }))}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label
+                  >
+                    {currentPosition.candidates.map((_, idx) => (
+                      <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
-        <table className="w-full border">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border px-4 py-2">Candidate</th>
-              <th className="border px-4 py-2">Position</th>
-              <th className="border px-4 py-2">Votes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((item) => (
-              <tr key={item.candidateId}>
-                <td className="border px-4 py-2">
-                  {item.candidateName}
-                </td>
-                <td className="border px-4 py-2">
-                  {item.positionName}
-                </td>
-                <td className="border px-4 py-2 text-center">
-                  {item.voteCount}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {!loading && selectedElection !== null && results.length === 0 && (
+        <p className="text-gray-600 mt-4">No analytics available yet for this election.</p>
+      )}
     </div>
   );
 };

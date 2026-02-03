@@ -1,20 +1,32 @@
+// src/Features/analytics/AnalyticsAPI.ts
+import axios from "axios";
 import { ApiDomain } from "../../utils/APIDomain";
 
-export interface CandidateResult {
-  candidateId: string;
-  candidateName: string;
+export type Election = {
+  electionId: number;
+  title: string;
+};
+
+export type PositionResult = {
+  positionId: number;
   positionName: string;
-  voteCount: number;
-}
+  totalVotes: number;
+  candidates: {
+    candidateId: number;
+    fullName: string;
+    voteCount: number;
+    percentage: string;
+  }[];
+};
 
-export const fetchElectionResults = async (electionId: string) => {
-  const response = await fetch(
-    `${ApiDomain}/api/votes/results/${electionId}`
-  );
+export const AnalyticsAPI = {
+  getElections: async (): Promise<Election[]> => {
+    const res = await axios.get(`${ApiDomain}/api/election-results`);
+    return res.data;
+  },
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch election results");
-  }
-
-  return response.json();
+  getResults: async (electionId: number): Promise<PositionResult[]> => {
+    const res = await axios.get(`${ApiDomain}/api/election-results/${electionId}/results`);
+    return res.data;
+  },
 };
