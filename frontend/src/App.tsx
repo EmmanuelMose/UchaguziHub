@@ -9,19 +9,26 @@ import Login from "../src/pages/auth/Login";
 import ForgotPassword from "../../frontend/src/pages/auth/ForgetPassword";
 import VerifyResetCode from "./pages/auth/VerifyResetCode";
 import ResetPassword from "./pages/auth/ResetPassword";
-//import AdminDashboard from "../src/pages/auth/dashboard/AdminDashboard/AdminDashboard";
+
 import UserDashboard from "../src/pages/dashboard/UserDashboard/UserDashboard";
-//import OfficerDashboard from "../src/pages/auth/dashboard/ElectionOfficerDashboad/ElectionOfficerDashboard";
 import CastVote from "./pages/dashboard/UserDashboard/castVote/CastVote";
 import ViewResults from "./pages/dashboard/UserDashboard/viewResults/ViewResults";
 import Analytics from "./pages/dashboard/UserDashboard/analytics/Analytics";
 import UserComplain from "./pages/dashboard/UserDashboard/complains/UserComplain";
 
+// ADMIN IMPORTS
+import AdminDashboard from "../src/pages/dashboard/AdminDashboard/AdminDashboard";
+//import ManageUsers from "../src/pages/dashboard/AdminDashboard/manageUsers/ManageUsers";
+//import ElectionOfficer from "../src/pages/dashboard/AdminDashboard/electionOfficer/ElectionOfficer";
+//import Reports from "../src/pages/dashboard/AdminDashboard/reports/Reports";
+//import AdminViewResults from "../src/pages/dashboard/AdminDashboard/viewResults/ViewResults";
 
 function App() {
+
   //const isAdmin = useSelector((state: RootState) => state.user.user?.role === 'Admin');
-   const isStudent = useSelector((state: RootState) => state.user.user?.role === 'Student');
-  
+  const isStudent = useSelector((state: RootState) => state.user.user?.role === 'Student');
+  const isAdmin = useSelector((state: RootState) => state.user.user?.role === 'Admin');
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -73,15 +80,34 @@ function App() {
         },
         {
           path: 'analytics',
-          element: < Analytics electionId={""}/>,
+          element: < Analytics />,
         },
-        
-        // {
-        //   path: 'logout',
-        //   element: < />
-        // },
-         
       ]
+    },
+
+    // ADMIN ROUTES
+    {
+      path: '/admin-dashboard',
+      element:
+       isAdmin ? <AdminDashboard /> : <Login />,
+       children: [
+        {
+          path: 'users',
+          element: <Analytics />
+        },
+        {
+          path: 'electionofficer',
+          element: <Analytics />
+        },
+        {
+          path: 'reports',
+          element: <Analytics />
+        },
+        {
+          path: 'viewResults',
+          element: <Analytics />
+        },
+       ]
     },
     
     {
@@ -94,4 +120,3 @@ function App() {
 }
 
 export default App;
-

@@ -1,4 +1,11 @@
-import { AiOutlineCheckCircle, AiOutlineBarChart, AiOutlineMessage } from "react-icons/ai";
+// src/pages/dashboard/AdminDashboard/aside/AdminDrawerData.ts
+
+import {
+  AiOutlineCheckCircle,
+  AiOutlineBarChart,
+  AiOutlineMessage,
+  AiOutlineLogout,
+} from "react-icons/ai";
 
 export type DrawerData = {
   id: string;
@@ -8,22 +15,22 @@ export type DrawerData = {
   requiresElectionClosed?: boolean;
 };
 
-export const userDrawerData: DrawerData[] = [
+export const adminDrawerData: DrawerData[] = [
   {
     id: "Users",
-    name: "users",
+    name: "Manage Users",
     icon: AiOutlineCheckCircle,
     link: "users",
   },
   {
     id: "ElectionOfficer",
-    name: "ElectionOfficer",
+    name: "Election Officers",
     icon: AiOutlineMessage,
     link: "electionofficer",
   },
   {
     id: "Reports",
-    name: "reports",
+    name: "Reports",
     icon: AiOutlineBarChart,
     link: "reports",
   },
@@ -34,5 +41,10 @@ export const userDrawerData: DrawerData[] = [
     link: "viewResults",
     requiresElectionClosed: true,
   },
-  
+  {
+    id: "logout",
+    name: "Log Out",
+    icon: AiOutlineLogout,
+    link: "logout",
+  },
 ];
