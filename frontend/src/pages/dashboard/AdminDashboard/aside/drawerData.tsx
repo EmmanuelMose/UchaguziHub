@@ -22,30 +22,29 @@ const AdminDrawer = ({
 
   return (
     <aside
-      className={`h-screen flex flex-col bg-gradient-to-b from-purple-900 via-purple-800 to-black text-white shadow-2xl transition-all duration-500 ease-in-out ${
+      className={`h-screen flex flex-col bg-gradient-to-b from-blue-950 via-blue-900 to-black text-white shadow-2xl transition-all duration-500 ease-in-out ${
         isSidebarOpen ? "w-72" : "w-20"
       }`}
     >
-      <div className="flex items-center justify-between px-5 py-6 border-b border-purple-800">
+      {/* Header */}
+      <div className="flex items-center justify-between px-5 py-6 border-b border-blue-800">
         <span
           className={`text-lg font-semibold tracking-wide transition-all duration-300 ${
-            isSidebarOpen
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 -translate-x-4"
+            isSidebarOpen ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-4"
           }`}
         >
           Admin Dashboard
         </span>
-
         <button
           onClick={onToggle}
-          className="text-purple-300 hover:text-white transition-transform duration-300 hover:scale-110"
+          className="text-blue-300 hover:text-white transition-transform duration-300 hover:scale-125"
         >
           {isSidebarOpen ? "❮" : "❯"}
         </button>
       </div>
 
-      <nav className="flex-1 px-3 py-6 space-y-2 overflow-y-auto">
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-6 space-y-3 overflow-y-auto">
         {adminDrawerData.map((item: DrawerData) => {
           if (item.requiresElectionClosed && !isElectionClosed) return null;
 
@@ -54,7 +53,7 @@ const AdminDrawer = ({
               <button
                 key={item.id}
                 onClick={handleLogout}
-                className="group w-full flex items-center gap-4 px-4 py-3 rounded-xl bg-transparent hover:bg-red-600/90 transition-all duration-300 shadow-md hover:shadow-red-700/40"
+                className="group w-full flex items-center gap-4 px-4 py-3 rounded-xl bg-transparent hover:bg-red-600/90 transition-all duration-300 shadow-md hover:shadow-red-700/50 transform hover:scale-105"
               >
                 <span className="text-red-400 group-hover:text-white transition">
                   <item.icon size={22} />
@@ -73,23 +72,21 @@ const AdminDrawer = ({
               key={item.id}
               to={item.link}
               className={({ isActive }) =>
-                `group relative flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 shadow-md ${
+                `group relative flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 shadow-md transform hover:scale-105 ${
                   isActive
-                    ? "bg-gradient-to-r from-purple-600 to-purple-800 shadow-purple-700/40"
-                    : "hover:bg-purple-800/60 hover:shadow-purple-700/30"
+                    ? "bg-gradient-to-r from-blue-600 to-blue-800 shadow-blue-700/50"
+                    : "hover:bg-blue-800/60 hover:shadow-blue-700/30"
                 }`
               }
             >
               <span
                 className={`absolute left-0 top-1/2 -translate-y-1/2 h-8 w-1 rounded-full transition-all duration-300 ${
-                  isSidebarOpen && "bg-purple-300"
+                  isSidebarOpen && "bg-blue-300"
                 }`}
               />
-
-              <span className="text-purple-300 group-hover:text-white transition duration-300">
+              <span className="text-blue-300 group-hover:text-white transition duration-300">
                 <item.icon size={22} />
               </span>
-
               {isSidebarOpen && (
                 <span className="text-sm font-medium tracking-wide group-hover:text-white">
                   {item.name}
@@ -100,7 +97,8 @@ const AdminDrawer = ({
         })}
       </nav>
 
-      <div className="px-4 py-4 text-xs text-center text-purple-300 border-t border-purple-800">
+      {/* Footer */}
+      <div className="px-4 py-4 text-xs text-center text-blue-300 border-t border-blue-800">
         © {new Date().getFullYear()} Uchaguzi Hub
       </div>
     </aside>

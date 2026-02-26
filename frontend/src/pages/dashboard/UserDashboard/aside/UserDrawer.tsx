@@ -26,6 +26,7 @@ const UserDrawer = ({
         isSidebarOpen ? "w-72" : "w-20"
       }`}
     >
+      {/* Header */}
       <div className="flex items-center justify-between px-5 py-6 border-b border-blue-800">
         <span
           className={`text-lg font-semibold tracking-wide transition-all duration-300 ${
@@ -36,13 +37,14 @@ const UserDrawer = ({
         </span>
         <button
           onClick={onToggle}
-          className="text-blue-300 hover:text-white transition-transform duration-300 hover:scale-110"
+          className="text-blue-300 hover:text-white transition-transform duration-300 hover:scale-125"
         >
           {isSidebarOpen ? "❮" : "❯"}
         </button>
       </div>
 
-      <nav className="flex-1 px-3 py-6 space-y-2 overflow-y-auto">
+      {/* Navigation */}
+      <nav className="flex-1 px-3 py-6 space-y-3 overflow-y-auto">
         {userDrawerData.map((item: DrawerData) => {
           if (item.requiresElectionClosed && !isElectionClosed) return null;
 
@@ -51,7 +53,7 @@ const UserDrawer = ({
               <button
                 key={item.id}
                 onClick={handleLogout}
-                className="group w-full flex items-center gap-4 px-4 py-3 rounded-xl bg-transparent hover:bg-red-600/90 transition-all duration-300 shadow-md hover:shadow-red-700/40"
+                className="group w-full flex items-center gap-4 px-4 py-3 rounded-xl bg-transparent hover:bg-red-600/90 transition-all duration-300 shadow-md hover:shadow-red-700/50 transform hover:scale-105"
               >
                 <span className="text-red-400 group-hover:text-white transition">
                   <item.icon size={22} />
@@ -70,9 +72,9 @@ const UserDrawer = ({
               key={item.id}
               to={item.link}
               className={({ isActive }) =>
-                `group relative flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 shadow-md ${
+                `group relative flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 shadow-md transform hover:scale-105 ${
                   isActive
-                    ? "bg-gradient-to-r from-blue-600 to-blue-800 shadow-blue-700/40"
+                    ? "bg-gradient-to-r from-blue-600 to-blue-800 shadow-blue-700/50"
                     : "hover:bg-blue-800/60 hover:shadow-blue-700/30"
                 }`
               }
@@ -95,6 +97,7 @@ const UserDrawer = ({
         })}
       </nav>
 
+      {/* Footer */}
       <div className="px-4 py-4 text-xs text-center text-blue-300 border-t border-blue-800">
         © {new Date().getFullYear()} Uchaguzi Hub
       </div>
