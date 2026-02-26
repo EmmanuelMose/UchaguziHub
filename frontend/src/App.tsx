@@ -23,11 +23,13 @@ import AdminDashboard from "../src/pages/dashboard/AdminDashboard/AdminDashboard
 //import Reports from "../src/pages/dashboard/AdminDashboard/reports/Reports";
 //import AdminViewResults from "../src/pages/dashboard/AdminDashboard/viewResults/ViewResults";
 
+import ElectionOfficerDashboard from "../../frontend/src/pages/dashboard/ElectionOfficerDashboad/ElectionOfficerDashboard";
+
 function App() {
 
-  //const isAdmin = useSelector((state: RootState) => state.user.user?.role === 'Admin');
   const isStudent = useSelector((state: RootState) => state.user.user?.role === 'Student');
   const isAdmin = useSelector((state: RootState) => state.user.user?.role === 'Admin');
+  const isElectionOfficer = useSelector((state: RootState) => state.user.user?.role === 'ElectionOfficer');
 
   const router = createBrowserRouter([
     {
@@ -108,6 +110,21 @@ function App() {
           element: <Analytics />
         },
        ]
+    },
+    {
+      path: '/officer-dashboard',
+      element: isElectionOfficer ? <ElectionOfficerDashboard /> : <Login />,
+      children: [
+        { path: 'candidate', 
+          element: <Analytics />
+        },
+        { path: 'election', 
+          element: <Analytics /> 
+        },
+        { path: 'viewResults', 
+          element: <Analytics /> 
+        },
+      ]
     },
     
     {
