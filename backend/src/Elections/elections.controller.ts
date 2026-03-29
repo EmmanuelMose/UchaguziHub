@@ -12,7 +12,7 @@ export const getAllElectionsController = async (_req: Request, res: Response) =>
 
 export const getElectionByIdController = async (req: Request, res: Response) => {
   try {
-    const data = await electionsService.getById(req.params.id);
+    const data = await electionsService.getById(Number(req.params.id));
     res.json({ success: true, data });
   } catch (e: any) {
     res.status(500).json({ success: false, message: e.message });
@@ -55,7 +55,7 @@ export const updateElectionController = async (req: Request, res: Response) => {
       endDate: endDate ? new Date(endDate) : undefined,
     };
 
-    const data = await electionsService.update(req.params.id, updatedData);
+    const data = await electionsService.update(Number(req.params.id), updatedData);
     res.json({ success: true, data });
   } catch (e: any) {
     res.status(400).json({ success: false, message: e.message });
@@ -64,7 +64,7 @@ export const updateElectionController = async (req: Request, res: Response) => {
 
 export const deleteElectionController = async (req: Request, res: Response) => {
   try {
-    const data = await electionsService.delete(req.params.id);
+    const data = await electionsService.delete(Number(req.params.id));
     res.json({ success: true, data });
   } catch (e: any) {
     res.status(400).json({ success: false, message: e.message });
