@@ -4,13 +4,12 @@ export const sendEmail = async (
   email: string,
   subject: string,
   message: string,
-  html: string
-) => {
+  html?: string
+): Promise<boolean> => {
   try {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
-      service: "gmail",
       secure: true,
       auth: {
         user: process.env.EMAIL_USER,
@@ -19,23 +18,21 @@ export const sendEmail = async (
     });
 
     const mailOptions = {
-      from: process.env.EMAIL_USER,
+      from: `"UchaguziHub" <${process.env.EMAIL_USER}>`,
       to: email,
       subject,
       text: message,
-      html,
+      html: html || message,
     };
 
-    const mailRes = await transporter.sendMail(mailOptions);
-    console.log("Mail response:", mailRes);
+    const info = await transporter.sendMail(mailOptions);
 
-    if (mailRes.accepted.length === 0) {
-      throw new Error("Email not sent, rejected by SMTP server");
+    if (!info.accepted || info.accepted.length === 0) {
+      throw new Error("Email not accepted by SMTP server");
     }
 
     return true;
   } catch (error: any) {
-    console.error("Error sending email:", error);
     throw new Error("Failed to send email: " + error.message);
   }
 };

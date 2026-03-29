@@ -1,123 +1,156 @@
 import db from "../Drizzle/db";
-import { systemUsers, users, elections, positions, candidates, complaints } from "../Drizzle/schema";
+import { systemUsers, users, elections, positions, candidates, votes } from "../Drizzle/schema";
 
 async function seed() {
   try {
+    await db.delete(votes).execute();
     await db.delete(candidates).execute();
     await db.delete(positions).execute();
     await db.delete(elections).execute();
-    await db.delete(complaints).execute();
     await db.delete(users).execute();
     await db.delete(systemUsers).execute();
 
-    const insertedSystemUsers = await db.insert(systemUsers)
-      .values([
-        { fullName: "Admin User", email: "admin@evote.com", registrationNumber: "ADM-2026-001", role: "Admin" },
-        { fullName: "Election Officer", email: "officer@evote.com", registrationNumber: "OFF-2026-001", role: "ElectionOfficer" },
-        { fullName: "Student One", email: "student1@evote.com", registrationNumber: "STU-2026-001", role: "Student" },
-        { fullName: "Student Two", email: "student2@evote.com", registrationNumber: "STU-2026-002", role: "Student" },
-        { fullName: "Student Three", email: "student3@evote.com", registrationNumber: "STU-2026-003", role: "Student" },
-        { fullName: "Student Four", email: "student4@evote.com", registrationNumber: "STU-2026-004", role: "Student" },
-        { fullName: "Student Five", email: "student5@evote.com", registrationNumber: "STU-2026-005", role: "Student" },
-        { fullName: "Student Six", email: "student6@evote.com", registrationNumber: "STU-2026-006", role: "Student" },
-        { fullName: "Student Seven", email: "student7@evote.com", registrationNumber: "STU-2026-007", role: "Student" },
-        { fullName: "Student Eight", email: "student8@evote.com", registrationNumber: "STU-2026-008", role: "Student" },
-        { fullName: "Emmanuel Mose", email: "emmanuelmose806@gmail.com", registrationNumber: "COM/B/01-00141/2022", role: "Student" },
-        { fullName: "Emmanuel Guru", email: "emmanuelmose10204@gmail.com", registrationNumber: "COM/B/01-00140/2022", role: "Admin" },
-        { fullName: "Emmanuel Ongera", email: "moseemmanuel64@yahoo.com", registrationNumber: "COM/B/01-00139/2022", role: "ElectionOfficer" }
-      ])
-      .returning({ id: systemUsers.systemUserId, email: systemUsers.email, fullName: systemUsers.fullName, registrationNumber: systemUsers.registrationNumber, role: systemUsers.role });
+    const insertedSystemUsers = await db.insert(systemUsers).values([
+      { fullName: "John Mwangi", email: "john.mwangi1@mmust.ac.ke", registrationNumber: "MMU/001/2022", role: "Student" },
+      { fullName: "Jane Wanjiku", email: "jane.wanjiku2@mmust.ac.ke", registrationNumber: "MMU/002/2022", role: "Student" },
+      { fullName: "Peter Otieno", email: "peter.otieno3@mmust.ac.ke", registrationNumber: "MMU/003/2022", role: "Student" },
+      { fullName: "Mary Achieng", email: "mary.achieng4@mmust.ac.ke", registrationNumber: "MMU/004/2022", role: "Student" },
+      { fullName: "David Kiptoo", email: "david.kiptoo5@mmust.ac.ke", registrationNumber: "MMU/005/2022", role: "Student" },
+      { fullName: "Brian Mutiso", email: "brian.mutiso6@mmust.ac.ke", registrationNumber: "MMU/006/2022", role: "Student" },
+      { fullName: "Kevin Ouma", email: "kevin.ouma7@mmust.ac.ke", registrationNumber: "MMU/007/2022", role: "Student" },
+      { fullName: "Faith Njeri", email: "faith.njeri8@mmust.ac.ke", registrationNumber: "MMU/008/2022", role: "Student" },
+      { fullName: "Grace Wambui", email: "grace.wambui9@mmust.ac.ke", registrationNumber: "MMU/009/2022", role: "Student" },
+      { fullName: "Daniel Cheruiyot", email: "daniel.cheruiyot10@mmust.ac.ke", registrationNumber: "MMU/010/2022", role: "Student" },
+      { fullName: "Samuel Kamau", email: "samuel.kamau11@mmust.ac.ke", registrationNumber: "MMU/011/2022", role: "Student" },
+      { fullName: "Josephine Atieno", email: "josephine.atieno12@mmust.ac.ke", registrationNumber: "MMU/012/2022", role: "Student" },
+      { fullName: "Victor Maina", email: "victor.maina13@mmust.ac.ke", registrationNumber: "MMU/013/2022", role: "Student" },
+      { fullName: "Mercy Chebet", email: "mercy.chebet14@mmust.ac.ke", registrationNumber: "MMU/014/2022", role: "Student" },
+      { fullName: "Allan Onyango", email: "allan.onyango15@mmust.ac.ke", registrationNumber: "MMU/015/2022", role: "Student" },
+      { fullName: "Lilian Jepkorir", email: "lilian.jepkorir16@mmust.ac.ke", registrationNumber: "MMU/016/2022", role: "Student" },
+      { fullName: "Dennis Kiprotich", email: "dennis.kiprotich17@mmust.ac.ke", registrationNumber: "MMU/017/2022", role: "Student" },
+      { fullName: "Caroline Wanjiru", email: "caroline.wanjiru18@mmust.ac.ke", registrationNumber: "MMU/018/2022", role: "Student" },
+      { fullName: "Paul Odhiambo", email: "paul.odhiambo19@mmust.ac.ke", registrationNumber: "MMU/019/2022", role: "Student" },
+      { fullName: "Esther Nyambura", email: "esther.nyambura20@mmust.ac.ke", registrationNumber: "MMU/020/2022", role: "Student" },
+      { fullName: "Mark Kiplangat", email: "mark.kiplangat21@mmust.ac.ke", registrationNumber: "MMU/021/2022", role: "Student" },
+      { fullName: "Irene Akinyi", email: "irene.akinyi22@mmust.ac.ke", registrationNumber: "MMU/022/2022", role: "Student" },
+      { fullName: "George Mutua", email: "george.mutua23@mmust.ac.ke", registrationNumber: "MMU/023/2022", role: "Student" },
+      { fullName: "Lucy Wairimu", email: "lucy.wairimu24@mmust.ac.ke", registrationNumber: "MMU/024/2022", role: "Student" },
+      { fullName: "Patrick Njuguna", email: "patrick.njuguna25@mmust.ac.ke", registrationNumber: "MMU/025/2022", role: "Student" },
+      { fullName: "Ann Wanjala", email: "ann.wanjala26@mmust.ac.ke", registrationNumber: "MMU/026/2022", role: "Student" },
+      { fullName: "Eric Barasa", email: "eric.barasa27@mmust.ac.ke", registrationNumber: "MMU/027/2022", role: "Student" },
+      { fullName: "Rose Auma", email: "rose.auma28@mmust.ac.ke", registrationNumber: "MMU/028/2022", role: "Student" },
+      { fullName: "Felix Kiprono", email: "felix.kiprono29@mmust.ac.ke", registrationNumber: "MMU/029/2022", role: "Student" },
+      { fullName: "Agnes Jepchirchir", email: "agnes.jepchirchir30@mmust.ac.ke", registrationNumber: "MMU/030/2022", role: "Student" },
+      { fullName: "Collins Otieno", email: "collins.otieno31@mmust.ac.ke", registrationNumber: "MMU/031/2022", role: "Student" },
+      { fullName: "Nancy Naliaka", email: "nancy.naliaka32@mmust.ac.ke", registrationNumber: "MMU/032/2022", role: "Student" },
+      { fullName: "Kelvin Kibet", email: "kelvin.kibet33@mmust.ac.ke", registrationNumber: "MMU/033/2022", role: "Student" },
+      { fullName: "Diana Chepkemoi", email: "diana.chepkemoi34@mmust.ac.ke", registrationNumber: "MMU/034/2022", role: "Student" },
+      { fullName: "Alex Ochieng", email: "alex.ochieng35@mmust.ac.ke", registrationNumber: "MMU/035/2022", role: "Student" },
+      { fullName: "Judith Wekesa", email: "judith.wekesa36@mmust.ac.ke", registrationNumber: "MMU/036/2022", role: "Student" },
+      { fullName: "Benard Simiyu", email: "benard.simiyu37@mmust.ac.ke", registrationNumber: "MMU/037/2022", role: "Student" },
+      { fullName: "Naomi Chepkoech", email: "naomi.chepkoech38@mmust.ac.ke", registrationNumber: "MMU/038/2022", role: "Student" },
+      { fullName: "Victor Wanyama", email: "victor.wanyama39@mmust.ac.ke", registrationNumber: "MMU/039/2022", role: "Student" },
+      { fullName: "Hannah Jepkemboi", email: "hannah.jepkemboi40@mmust.ac.ke", registrationNumber: "MMU/040/2022", role: "Student" },
+      { fullName: "Stephen Njoroge", email: "stephen.njoroge41@mmust.ac.ke", registrationNumber: "MMU/041/2022", role: "Student" },
+      { fullName: "Joyce Anyango", email: "joyce.anyango42@mmust.ac.ke", registrationNumber: "MMU/042/2022", role: "Student" },
+      { fullName: "Anthony Mwiti", email: "anthony.mwiti43@mmust.ac.ke", registrationNumber: "MMU/043/2022", role: "Student" },
+      { fullName: "Beatrice Muthoni", email: "beatrice.muthoni44@mmust.ac.ke", registrationNumber: "MMU/044/2022", role: "Student" },
+      { fullName: "Chris Odongo", email: "chris.odongo45@mmust.ac.ke", registrationNumber: "MMU/045/2022", role: "Student" },
+      { fullName: "Purity Chepkorir", email: "purity.chepkorir46@mmust.ac.ke", registrationNumber: "MMU/046/2022", role: "Student" },
+      { fullName: "Fredrick Otieno", email: "fredrick.otieno47@mmust.ac.ke", registrationNumber: "MMU/047/2022", role: "Student" },
+      { fullName: "Ruth Wanjiku", email: "ruth.wanjiku48@mmust.ac.ke", registrationNumber: "MMU/048/2022", role: "Student" },
+      { fullName: "Oscar Kipkemoi", email: "oscar.kipkemoi49@mmust.ac.ke", registrationNumber: "MMU/049/2022", role: "Student" },
+      { fullName: "Dorcas Naliaka", email: "dorcas.naliaka50@mmust.ac.ke", registrationNumber: "MMU/050/2022", role: "Student" },
+      { fullName: "Martin Wekesa", email: "martin.wekesa51@mmust.ac.ke", registrationNumber: "MMU/051/2022", role: "Student" },
+      { fullName: "Emily Chebet", email: "emily.chebet52@mmust.ac.ke", registrationNumber: "MMU/052/2022", role: "Student" },
+      { fullName: "Brian Odhiambo", email: "brian.odhiambo53@mmust.ac.ke", registrationNumber: "MMU/053/2022", role: "Student" },
+      { fullName: "Sharon Wairimu", email: "sharon.wairimu54@mmust.ac.ke", registrationNumber: "MMU/054/2022", role: "Student" },
+      { fullName: "George Kiptoo", email: "george.kiptoo55@mmust.ac.ke", registrationNumber: "MMU/055/2022", role: "Student" },
+      { fullName: "Faith Achieng", email: "faith.achieng56@mmust.ac.ke", registrationNumber: "MMU/056/2022", role: "Student" },
+      { fullName: "Kevin Mutiso", email: "kevin.mutiso57@mmust.ac.ke", registrationNumber: "MMU/057/2022", role: "Student" },
+      { fullName: "Grace Njeri", email: "grace.njeri58@mmust.ac.ke", registrationNumber: "MMU/058/2022", role: "Student" },
+      { fullName: "Daniel Ouma", email: "daniel.ouma59@mmust.ac.ke", registrationNumber: "MMU/059/2022", role: "Student" },
+      { fullName: "Samuel Kamau Jr", email: "samuel.kamau60@mmust.ac.ke", registrationNumber: "MMU/060/2022", role: "Student" },
+      { fullName: "Ivy Wambui", email: "ivy.wambui61@mmust.ac.ke", registrationNumber: "MMU/061/2022", role: "Student" },
+      { fullName: "Victor Maina Jr", email: "victor.maina62@mmust.ac.ke", registrationNumber: "MMU/062/2022", role: "Student" },
+      { fullName: "Mercy Chebet Jr", email: "mercy.chebet63@mmust.ac.ke", registrationNumber: "MMU/063/2022", role: "Student" },
+      { fullName: "Allan Onyango Jr", email: "allan.onyango64@mmust.ac.ke", registrationNumber: "MMU/064/2022", role: "Student" },
+      { fullName: "Lilian Jepkorir Jr", email: "lilian.jepkorir65@mmust.ac.ke", registrationNumber: "MMU/065/2022", role: "Student" },
+      { fullName: "Dennis Kiprotich Jr", email: "dennis.kiprotich66@mmust.ac.ke", registrationNumber: "MMU/066/2022", role: "Student" },
+      { fullName: "Caroline Wanjiru Jr", email: "caroline.wanjiru67@mmust.ac.ke", registrationNumber: "MMU/067/2022", role: "Student" },
+      { fullName: "Paul Odhiambo Jr", email: "paul.odhiambo68@mmust.ac.ke", registrationNumber: "MMU/068/2022", role: "Student" },
+      { fullName: "Esther Nyambura Jr", email: "esther.nyambura69@mmust.ac.ke", registrationNumber: "MMU/069/2022", role: "Student" },
+      { fullName: "Mark Kiplangat Jr", email: "mark.kiplangat70@mmust.ac.ke", registrationNumber: "MMU/070/2022", role: "Student" }
+    ]).returning({ id: systemUsers.systemUserId, email: systemUsers.email, fullName: systemUsers.fullName, registrationNumber: systemUsers.registrationNumber, role: systemUsers.role });
 
-    const usersData = insertedSystemUsers.map(u => ({
-      systemUserId: u.id,
-      fullName: u.fullName,
-      registrationNumber: u.registrationNumber,
-      email: u.email,
-      role: u.role,
-      passwordHash: "hashed_Secure@123A",
-      isVerified: true
-    }));
+    const insertedUsers = await db.insert(users).values(
+      insertedSystemUsers.map(u => ({
+        systemUserId: u.id,
+        fullName: u.fullName,
+        registrationNumber: u.registrationNumber,
+        email: u.email,
+        role: u.role,
+        passwordHash: "hashed_password",
+        isVerified: true
+      }))
+    ).returning({ id: users.userId });
 
-    const insertedUsers = await db.insert(users)
-      .values(usersData)
-      .returning({ id: users.userId, email: users.email });
+    const adminId = insertedUsers[0].id;
 
-    const adminUserId = insertedUsers.find(u => u.email === "admin@evote.com")!.id;
+    const [election] = await db.insert(elections).values({
+      title: "MMUST 2026 General Elections",
+      description: "University general elections",
+      startDate: new Date("2026-05-01"),
+      endDate: new Date("2026-05-05"),
+      status: "Ongoing",
+      createdBy: adminId
+    }).returning({ id: elections.electionId });
 
-    const insertedElections = await db.insert(elections)
-      .values([
-        { title: "Student Council Election 2026", description: "Main student leadership election", startDate: new Date("2026-02-01"), endDate: new Date("2026-02-07"), status: "Ongoing", createdBy: adminUserId },
-        { title: "Faculty Representatives Election 2026", description: "Faculty leadership election", startDate: new Date("2026-03-01"), endDate: new Date("2026-03-05"), status: "Upcoming", createdBy: adminUserId }
-      ])
-      .returning({ id: elections.electionId });
+    const insertedPositions = await db.insert(positions).values([
+      { electionId: election.id, name: "President" },
+      { electionId: election.id, name: "Vice President" },
+      { electionId: election.id, name: "Secretary General" },
+      { electionId: election.id, name: "Treasurer" },
+      { electionId: election.id, name: "Organizing Secretary" }
+    ]).returning({ id: positions.positionId });
 
-    const insertedPositions = await db.insert(positions)
-      .values([
-        { electionId: insertedElections[0].id, name: "President" },
-        { electionId: insertedElections[0].id, name: "Vice President" },
-        { electionId: insertedElections[0].id, name: "Secretary" },
-        { electionId: insertedElections[0].id, name: "Treasurer" },
-        { electionId: insertedElections[0].id, name: "Organizing Secretary" },
-        { electionId: insertedElections[1].id, name: "President" },
-        { electionId: insertedElections[1].id, name: "Vice President" },
-        { electionId: insertedElections[1].id, name: "Secretary" },
-        { electionId: insertedElections[1].id, name: "Treasurer" },
-        { electionId: insertedElections[1].id, name: "Organizing Secretary" }
-      ])
-      .returning({ id: positions.positionId });
+    const insertedCandidates = await db.insert(candidates).values([
+      { userId: insertedUsers[1].id, electionId: election.id, positionId: insertedPositions[0].id, faculty: "Computing", manifesto: "Leadership" },
+      { userId: insertedUsers[2].id, electionId: election.id, positionId: insertedPositions[0].id, faculty: "Business", manifesto: "Growth" },
+      { userId: insertedUsers[3].id, electionId: election.id, positionId: insertedPositions[0].id, faculty: "Engineering", manifesto: "Development" },
 
-    await db.insert(candidates)
-      .values([
-        { userId: insertedUsers[2].id, electionId: insertedElections[0].id, positionId: insertedPositions[0].id, faculty: "Computing", manifesto: "Transparency and accountability" },
-        { userId: insertedUsers[3].id, electionId: insertedElections[0].id, positionId: insertedPositions[0].id, faculty: "Business", manifesto: "Student empowerment" },
-        { userId: insertedUsers[4].id, electionId: insertedElections[0].id, positionId: insertedPositions[0].id, faculty: "Engineering", manifesto: "Better facilities" },
+      { userId: insertedUsers[4].id, electionId: election.id, positionId: insertedPositions[1].id, faculty: "Computing", manifesto: "Unity" },
+      { userId: insertedUsers[5].id, electionId: election.id, positionId: insertedPositions[1].id, faculty: "Business", manifesto: "Service" },
+      { userId: insertedUsers[6].id, electionId: election.id, positionId: insertedPositions[1].id, faculty: "Engineering", manifesto: "Efficiency" },
 
-        { userId: insertedUsers[5].id, electionId: insertedElections[0].id, positionId: insertedPositions[1].id, faculty: "Computing", manifesto: "Support for students" },
-        { userId: insertedUsers[6].id, electionId: insertedElections[0].id, positionId: insertedPositions[1].id, faculty: "Business", manifesto: "Efficiency in leadership" },
-        { userId: insertedUsers[7].id, electionId: insertedElections[0].id, positionId: insertedPositions[1].id, faculty: "Engineering", manifesto: "Inclusive governance" },
+      { userId: insertedUsers[7].id, electionId: election.id, positionId: insertedPositions[2].id, faculty: "Computing", manifesto: "Communication" },
+      { userId: insertedUsers[8].id, electionId: election.id, positionId: insertedPositions[2].id, faculty: "Business", manifesto: "Records" },
+      { userId: insertedUsers[9].id, electionId: election.id, positionId: insertedPositions[2].id, faculty: "Engineering", manifesto: "Organization" },
 
-        { userId: insertedUsers[2].id, electionId: insertedElections[0].id, positionId: insertedPositions[2].id, faculty: "Computing", manifesto: "Better communication" },
-        { userId: insertedUsers[3].id, electionId: insertedElections[0].id, positionId: insertedPositions[2].id, faculty: "Business", manifesto: "Efficient documentation" },
-        { userId: insertedUsers[4].id, electionId: insertedElections[0].id, positionId: insertedPositions[2].id, faculty: "Engineering", manifesto: "Timely reports" },
+      { userId: insertedUsers[10].id, electionId: election.id, positionId: insertedPositions[3].id, faculty: "Computing", manifesto: "Finance" },
+      { userId: insertedUsers[11].id, electionId: election.id, positionId: insertedPositions[3].id, faculty: "Business", manifesto: "Budget" },
+      { userId: insertedUsers[12].id, electionId: election.id, positionId: insertedPositions[3].id, faculty: "Engineering", manifesto: "Transparency" },
 
-        { userId: insertedUsers[5].id, electionId: insertedElections[0].id, positionId: insertedPositions[3].id, faculty: "Computing", manifesto: "Transparent finances" },
-        { userId: insertedUsers[6].id, electionId: insertedElections[0].id, positionId: insertedPositions[3].id, faculty: "Business", manifesto: "Budget accountability" },
-        { userId: insertedUsers[7].id, electionId: insertedElections[0].id, positionId: insertedPositions[3].id, faculty: "Engineering", manifesto: "Financial clarity" },
+      { userId: insertedUsers[13].id, electionId: election.id, positionId: insertedPositions[4].id, faculty: "Computing", manifesto: "Events" },
+      { userId: insertedUsers[14].id, electionId: election.id, positionId: insertedPositions[4].id, faculty: "Business", manifesto: "Activities" },
+      { userId: insertedUsers[15].id, electionId: election.id, positionId: insertedPositions[4].id, faculty: "Engineering", manifesto: "Planning" }
+    ]).returning({ id: candidates.candidateId, positionId: candidates.positionId });
 
-        { userId: insertedUsers[2].id, electionId: insertedElections[0].id, positionId: insertedPositions[4].id, faculty: "Computing", manifesto: "Better events" },
-        { userId: insertedUsers[3].id, electionId: insertedElections[0].id, positionId: insertedPositions[4].id, faculty: "Business", manifesto: "Student activities" },
-        { userId: insertedUsers[4].id, electionId: insertedElections[0].id, positionId: insertedPositions[4].id, faculty: "Engineering", manifesto: "Inclusive planning" },
-
-        { userId: insertedUsers[5].id, electionId: insertedElections[1].id, positionId: insertedPositions[5].id, faculty: "Computing", manifesto: "Faculty transparency" },
-        { userId: insertedUsers[6].id, electionId: insertedElections[1].id, positionId: insertedPositions[5].id, faculty: "Business", manifesto: "Better leadership" },
-        { userId: insertedUsers[7].id, electionId: insertedElections[1].id, positionId: insertedPositions[5].id, faculty: "Engineering", manifesto: "Inclusivity" },
-
-        { userId: insertedUsers[2].id, electionId: insertedElections[1].id, positionId: insertedPositions[6].id, faculty: "Computing", manifesto: "Support faculty" },
-        { userId: insertedUsers[3].id, electionId: insertedElections[1].id, positionId: insertedPositions[6].id, faculty: "Business", manifesto: "Better organization" },
-        { userId: insertedUsers[4].id, electionId: insertedElections[1].id, positionId: insertedPositions[6].id, faculty: "Engineering", manifesto: "Efficiency" },
-
-        { userId: insertedUsers[5].id, electionId: insertedElections[1].id, positionId: insertedPositions[7].id, faculty: "Computing", manifesto: "Secretarial excellence" },
-        { userId: insertedUsers[6].id, electionId: insertedElections[1].id, positionId: insertedPositions[7].id, faculty: "Business", manifesto: "Effective communication" },
-        { userId: insertedUsers[7].id, electionId: insertedElections[1].id, positionId: insertedPositions[7].id, faculty: "Engineering", manifesto: "Organized record keeping" },
-
-        { userId: insertedUsers[2].id, electionId: insertedElections[1].id, positionId: insertedPositions[8].id, faculty: "Computing", manifesto: "Budget management" },
-        { userId: insertedUsers[3].id, electionId: insertedElections[1].id, positionId: insertedPositions[8].id, faculty: "Business", manifesto: "Financial transparency" },
-        { userId: insertedUsers[4].id, electionId: insertedElections[1].id, positionId: insertedPositions[8].id, faculty: "Engineering", manifesto: "Accountability" },
-
-        { userId: insertedUsers[5].id, electionId: insertedElections[1].id, positionId: insertedPositions[9].id, faculty: "Computing", manifesto: "Organizing faculty events" },
-        { userId: insertedUsers[6].id, electionId: insertedElections[1].id, positionId: insertedPositions[9].id, faculty: "Business", manifesto: "Better planning" },
-        { userId: insertedUsers[7].id, electionId: insertedElections[1].id, positionId: insertedPositions[9].id, faculty: "Engineering", manifesto: "Inclusive activities" }
-      ]);
-
-    await db.insert(complaints)
-      .values([
-        { userId: insertedUsers[2].id, complaint: "Voting page was slow during peak hours" },
-        { userId: insertedUsers[3].id, complaint: "Candidate list was not loading properly" }
-      ]);
+    for (const user of insertedUsers) {
+      for (const position of insertedPositions) {
+        const candidate = insertedCandidates.find(c => c.positionId === position.id)!;
+        await db.insert(votes).values({
+          voterId: user.id,
+          candidateId: candidate.id,
+          electionId: election.id,
+          positionId: position.id
+        });
+      }
+    }
 
     console.log("Seeding completed");
-  } catch (error) {
-    console.error(error);
+  } catch (e) {
+    console.error(e);
   }
 }
 

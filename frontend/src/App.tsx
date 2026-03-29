@@ -18,7 +18,7 @@ import UserComplain from "./pages/dashboard/UserDashboard/complains/UserComplain
 
 // ADMIN IMPORTS
 import AdminDashboard from "../src/pages/dashboard/AdminDashboard/AdminDashboard";
-//import ManageUsers from "../src/pages/dashboard/AdminDashboard/manageUsers/ManageUsers";
+import Users from "../src/pages/dashboard/AdminDashboard/users/Users";
 //import ElectionOfficer from "../src/pages/dashboard/AdminDashboard/electionOfficer/ElectionOfficer";
 //import Reports from "../src/pages/dashboard/AdminDashboard/reports/Reports";
 //import AdminViewResults from "../src/pages/dashboard/AdminDashboard/viewResults/ViewResults";
@@ -95,7 +95,7 @@ function App() {
        children: [
         {
           path: 'users',
-          element: <Analytics />
+          element: <Users />
         },
         {
           path: 'electionofficer',
@@ -109,6 +109,7 @@ function App() {
           path: 'viewResults',
           element: <Analytics />
         },
+
        ]
     },
     {
