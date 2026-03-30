@@ -23,12 +23,6 @@ export const adminDrawerData: DrawerData[] = [
     link: "manage-users",
   },
   {
-    id: "ElectionOfficer",
-    name: "Election Officers",
-    icon: AiOutlineMessage,
-    link: "electionofficer",
-  },
-  {
     id: "Reports",
     name: "Reports",
     icon: AiOutlineBarChart,

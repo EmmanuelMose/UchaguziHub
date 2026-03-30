@@ -36,6 +36,12 @@ export const userDrawerData: DrawerData[] = [
     requiresElectionClosed: true,
   },
   {
+    id: "Reports",
+    name: "Reports",
+    icon: AiOutlineBarChart,
+    link: "reports",
+  },
+  {
     id: "logout",
     name: "Log Out",
     icon: AiOutlineLogout,

@@ -21,7 +21,7 @@ import AdminDashboard from "../src/pages/dashboard/AdminDashboard/AdminDashboard
 import Users from "../src/pages/dashboard/AdminDashboard/users/Users";
 import Complains from "./pages/dashboard/AdminDashboard/complains/Complains";
 //import ElectionOfficer from "../src/pages/dashboard/AdminDashboard/electionOfficer/ElectionOfficer";
-//import Reports from "../src/pages/dashboard/AdminDashboard/reports/Reports";
+import Reports from "../src/pages/dashboard/AdminDashboard/reports/Reports";
 //import AdminViewResults from "../src/pages/dashboard/AdminDashboard/viewResults/ViewResults";
 
 import ElectionOfficerDashboard from "../../frontend/src/pages/dashboard/ElectionOfficerDashboad/ElectionOfficerDashboard";
@@ -85,6 +85,10 @@ function App() {
           path: 'analytics',
           element: < Analytics />,
         },
+        {
+          path: 'reports',
+          element: <Reports />
+        },
       ]
     },
 
@@ -99,12 +103,8 @@ function App() {
           element: <Users />
         },
         {
-          path: 'electionofficer',
-          element: <Analytics />
-        },
-        {
           path: 'reports',
-          element: <Analytics />
+          element: <Reports />
         },
         {
           path: 'view-results',
