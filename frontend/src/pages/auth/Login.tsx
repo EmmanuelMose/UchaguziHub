@@ -34,26 +34,21 @@ const Login = () => {
       const res = await axios.post(`${ApiDomain}/api/auth/login`, payload);
 
       if (res.data.success && res.data.token) {
-        // Save full user info from backend response
         const user = {
           userId: res.data.userId,
           role: res.data.role,
           email: res.data.email
         };
 
-        // Save to Redux
         dispatch(setUser(user));
 
-        // Save to localStorage
         localStorage.setItem("user", JSON.stringify(user));
         localStorage.setItem("token", res.data.token);
 
-        // Navigate based on role
         const role = res.data.role.trim();
         if (role === "Admin") navigate("/admin-dashboard");
         else if (role === "ElectionOfficer") navigate("/officer-dashboard");
-        else if (role === "Student") navigate("/user-dashboard"); // For students
-        else navigate("/user-dashboard"); // Default fallback
+        else navigate("/user-dashboard");
       } else {
         setServerError(res.data.message || "Invalid login credentials");
       }
@@ -71,7 +66,6 @@ const Login = () => {
         <h2 className="text-2xl font-bold text-center text-blue-800 mb-6">Login</h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email */}
           <div>
             <label className="block mb-1 text-blue-700 font-semibold">Email</label>
             <input
@@ -88,7 +82,6 @@ const Login = () => {
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
           </div>
 
-          {/* Password */}
           <div className="relative">
             <label className="block mb-1 text-blue-700 font-semibold">Password</label>
             <input
@@ -108,10 +101,8 @@ const Login = () => {
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
           </div>
 
-          {/* Server Error */}
           {serverError && <p className="text-red-500 text-center">{serverError}</p>}
 
-          {/* Submit Button */}
           <button
             type="submit"
             className={`w-full py-2 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 transition-all ${loading ? "cursor-not-allowed" : ""}`}
@@ -121,7 +112,6 @@ const Login = () => {
           </button>
         </form>
 
-        {/* Links */}
         <div className="mt-4 text-center text-sm">
           <p>
             Forgot your password?{" "}

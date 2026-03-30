@@ -8,21 +8,31 @@ export type Candidate = { candidateId: number; fullName: string; manifesto?: str
 export const CastVoteAPI = {
   getElections: async (): Promise<Election[]> => {
     const res = await axios.get(`${ApiDomain}/api/elections`);
-    return Array.isArray(res.data) ? res.data : [];
+    return res.data.data || [];
   },
 
   getPositions: async (electionId: number): Promise<Position[]> => {
     const res = await axios.get(`${ApiDomain}/api/votes/positions/${electionId}`);
-    return Array.isArray(res.data) ? res.data : [];
+    return res.data.data || [];
   },
 
   getCandidates: async (positionId: number): Promise<Candidate[]> => {
     const res = await axios.get(`${ApiDomain}/api/votes/candidates/${positionId}`);
-    return Array.isArray(res.data) ? res.data : [];
+    return res.data.data || [];
   },
 
-  castVote: async (voterId: number, candidateId: number, electionId: number, positionId: number) => {
-    const res = await axios.post(`${ApiDomain}/api/votes`, { voterId, candidateId, electionId, positionId });
+  castVote: async (
+    voterId: number,
+    candidateId: number,
+    electionId: number,
+    positionId: number
+  ) => {
+    const res = await axios.post(`${ApiDomain}/api/votes`, {
+      voterId,
+      candidateId,
+      electionId,
+      positionId,
+    });
     return res.data;
   },
 };

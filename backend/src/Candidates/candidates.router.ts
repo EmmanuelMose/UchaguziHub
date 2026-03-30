@@ -12,9 +12,9 @@ import {
 const candidatesRouter = Router();
 
 candidatesRouter.get("/", getAllCandidatesController);
-candidatesRouter.get("/:id", getCandidateByIdController);
 candidatesRouter.get("/election/:electionId", getCandidatesByElectionController);
 candidatesRouter.get("/position/:positionId", getCandidatesByPositionController);
+candidatesRouter.get("/:id", getCandidateByIdController);
 candidatesRouter.post("/", createCandidateController);
 candidatesRouter.put("/:id", updateCandidateController);
 candidatesRouter.delete("/:id", deleteCandidateController);
