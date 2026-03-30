@@ -41,6 +41,13 @@ export const adminDrawerData: DrawerData[] = [
     link: "viewResults",
     requiresElectionClosed: true,
   },
+   {
+    id: "analytics",
+    name: "Analytics",
+    icon: AiOutlineBarChart,
+    link: "analytics",
+    requiresElectionClosed: true,
+  },
   {
     id: "logout",
     name: "Log Out",
