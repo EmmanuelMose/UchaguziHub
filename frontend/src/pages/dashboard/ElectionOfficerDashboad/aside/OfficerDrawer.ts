@@ -17,9 +17,15 @@ export const userDrawerData: DrawerData[] = [
   },
   {
     id: "election",
-    name: "election",
+    name: "Elections",
     icon: AiOutlineMessage,
     link: "election",
+  },
+  {
+    id: "positions",
+    name: "Positions",
+    icon: AiOutlineMessage,
+    link: "positions",
   },
   {
     id: "viewResults",
