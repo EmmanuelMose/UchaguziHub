@@ -1,6 +1,10 @@
 import db from "../Drizzle/db";
 import { systemUsers, users, elections, positions, candidates, votes } from "../Drizzle/schema";
 
+function getRandomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
+
 async function seed() {
   try {
     await db.delete(votes).execute();
@@ -138,17 +142,18 @@ async function seed() {
 
     for (const user of insertedUsers) {
       for (const position of insertedPositions) {
-        const candidate = insertedCandidates.find(c => c.positionId === position.id)!;
+        const candidatesForPosition = insertedCandidates.filter(c => c.positionId === position.id);
+        const randomCandidate = candidatesForPosition[getRandomInt(candidatesForPosition.length)];
         await db.insert(votes).values({
           voterId: user.id,
-          candidateId: candidate.id,
+          candidateId: randomCandidate.id,
           electionId: election.id,
           positionId: position.id
         });
       }
     }
 
-    console.log("Seeding completed");
+    console.log("Seeding completed successfully");
   } catch (e) {
     console.error(e);
   }

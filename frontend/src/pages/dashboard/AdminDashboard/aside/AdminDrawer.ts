@@ -20,7 +20,7 @@ export const adminDrawerData: DrawerData[] = [
     id: "Users",
     name: "Manage Users",
     icon: AiOutlineCheckCircle,
-    link: "users",
+    link: "manage-users",
   },
   {
     id: "ElectionOfficer",
@@ -38,15 +38,21 @@ export const adminDrawerData: DrawerData[] = [
     id: "viewResults",
     name: "View Results",
     icon: AiOutlineBarChart,
-    link: "viewResults",
+    link: "view-results",
     requiresElectionClosed: true,
   },
    {
     id: "analytics",
     name: "Analytics",
     icon: AiOutlineBarChart,
-    link: "analytics",
+    link: "show-analytics",
     requiresElectionClosed: true,
+  },
+  {
+    id: "complaints",
+    name: "Complains",
+    icon: AiOutlineMessage,
+    link: "view-complains",
   },
   {
     id: "logout",

@@ -23,7 +23,11 @@ export interface NewSystemUser {
 export const systemUsersService = {
   getAll: async (): Promise<SystemUser[]> => {
     const results = await db.query.systemUsers.findMany();
-    return results.map(u => ({ ...u, systemUserId: String(u.systemUserId), isActive: u.isActive ?? true }));
+    return results.map(u => ({
+      ...u,
+      systemUserId: String(u.systemUserId),
+      isActive: u.isActive ?? true
+    }));
   },
 
   getById: async (id: string): Promise<SystemUser | null> => {
