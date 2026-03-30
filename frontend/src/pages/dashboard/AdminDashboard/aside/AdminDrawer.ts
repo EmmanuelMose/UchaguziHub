@@ -23,17 +23,17 @@ export const adminDrawerData: DrawerData[] = [
     link: "manage-users",
   },
   {
-    id: "Reports",
-    name: "Reports",
-    icon: AiOutlineBarChart,
-    link: "reports",
-  },
-  {
     id: "viewResults",
     name: "View Results",
     icon: AiOutlineBarChart,
     link: "view-results",
     requiresElectionClosed: true,
+  },
+  {
+    id: "Reports",
+    name: "Reports",
+    icon: AiOutlineBarChart,
+    link: "reports",
   },
    {
     id: "analytics",

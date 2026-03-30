@@ -134,6 +134,22 @@ function App() {
         { path: 'viewResults', 
           element: <Analytics /> 
         },
+        {
+          path: 'reports',
+          element: <Reports />
+        },
+        {
+          path: 'view-results',
+          element: <ViewResults />
+        },
+        {
+          path: 'show-analytics',
+          element: <Analytics />
+        },
+        {
+          path: 'view-complains',
+          element: <Complains />
+        },
       ]
     },
     

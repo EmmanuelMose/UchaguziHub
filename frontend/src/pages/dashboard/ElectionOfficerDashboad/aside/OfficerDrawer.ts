@@ -28,5 +28,24 @@ export const userDrawerData: DrawerData[] = [
     link: "viewResults",
     requiresElectionClosed: true,
   },
+  {
+    id: "Reports",
+    name: "Reports",
+    icon: AiOutlineBarChart,
+    link: "reports",
+  },
+   {
+    id: "analytics",
+    name: "Analytics",
+    icon: AiOutlineBarChart,
+    link: "show-analytics",
+    requiresElectionClosed: true,
+  },
+  {
+    id: "complaints",
+    name: "Complains",
+    icon: AiOutlineMessage,
+    link: "view-complains",
+  },
   
 ];
