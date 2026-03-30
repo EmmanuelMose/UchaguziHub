@@ -25,6 +25,7 @@ import Reports from "../src/pages/dashboard/AdminDashboard/reports/Reports";
 import Elections from "./pages/dashboard/ElectionOfficerDashboad/elections/Elections";
 //import AdminViewResults from "../src/pages/dashboard/AdminDashboard/viewResults/ViewResults";
 import Positions from "./pages/dashboard/ElectionOfficerDashboad/positions/Positions";
+import Candidate from "./pages/dashboard/ElectionOfficerDashboad/candidates/Candidates";
 
 import ElectionOfficerDashboard from "../../frontend/src/pages/dashboard/ElectionOfficerDashboad/ElectionOfficerDashboard";
 
@@ -128,7 +129,7 @@ function App() {
       element: isElectionOfficer ? <ElectionOfficerDashboard /> : <Login />,
       children: [
         { path: 'candidate', 
-          element: <Analytics />
+          element: <Candidate /> 
         },
         { path: 'election', 
           element: <Elections /> 

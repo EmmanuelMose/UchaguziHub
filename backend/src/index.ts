@@ -46,7 +46,7 @@ const initializeApp = () => {
   app.use("/api/candidates", candidatesRouter);
   app.use("/api/votes", votesRouter);
   app.use("/complaints", ComplainRouter);
- app.use("/api/election-results", electionResultsRouter);
+  app.use("/api/election-results", electionResultsRouter);
 
 
 
