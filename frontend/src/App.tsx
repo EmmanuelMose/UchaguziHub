@@ -16,18 +16,16 @@ import ViewResults from "./pages/dashboard/UserDashboard/viewResults/ViewResults
 import Analytics from "./pages/dashboard/UserDashboard/analytics/Analytics";
 import UserComplain from "./pages/dashboard/UserDashboard/complains/UserComplain";
 
-// ADMIN IMPORTS
 import AdminDashboard from "../src/pages/dashboard/AdminDashboard/AdminDashboard";
 import Users from "../src/pages/dashboard/AdminDashboard/users/Users";
 import Complains from "./pages/dashboard/AdminDashboard/complains/Complains";
-//import ElectionOfficer from "../src/pages/dashboard/AdminDashboard/electionOfficer/ElectionOfficer";
-import Reports from "../src/pages/dashboard/AdminDashboard/reports/Reports";
+import Reports from "./pages/dashboard/AdminDashboard/reports/Reports";
 import Elections from "./pages/dashboard/ElectionOfficerDashboad/elections/Elections";
-//import AdminViewResults from "../src/pages/dashboard/AdminDashboard/viewResults/ViewResults";
 import Positions from "./pages/dashboard/ElectionOfficerDashboad/positions/Positions";
 import Candidate from "./pages/dashboard/ElectionOfficerDashboad/candidates/Candidates";
 
 import ElectionOfficerDashboard from "../../frontend/src/pages/dashboard/ElectionOfficerDashboad/ElectionOfficerDashboard";
+import Chatbot from "../../frontend/src/components/chatbot/Chatbot";
 
 function App() {
 
@@ -54,118 +52,65 @@ function App() {
       element: <Login />,
     },
     {
-    path: "/forgot-password",
-    element: <ForgotPassword />,
-  },
-  {
-    path: "/verify-reset-code",
-    element: <VerifyResetCode />,
-  },
-  {
-    path: "/reset-password",
-    element: <ResetPassword />,
-  },
-  
-  // User dashboard routes
+      path: "/forgot-password",
+      element: <ForgotPassword />,
+    },
+    {
+      path: "/verify-reset-code",
+      element: <VerifyResetCode />,
+    },
+    {
+      path: "/reset-password",
+      element: <ResetPassword />,
+    },
     {
       path: '/user-dashboard',
-      element:
-       isStudent ? <UserDashboard /> : <Login />,
-       children: [
-        {
-          path: 'castVote',
-          element: < CastVote/>
-        },
-        {
-          path: 'viewResults',
-          element: < ViewResults/>,
-        },
-        {
-          path: 'complaints',
-          element: < UserComplain/>
-        },
-        {
-          path: 'analytics',
-          element: < Analytics />,
-        },
-        {
-          path: 'reports',
-          element: <Reports />
-        },
+      element: isStudent ? <UserDashboard /> : <Login />,
+      children: [
+        { path: 'castVote', element: < CastVote/> },
+        { path: 'viewResults', element: < ViewResults/> },
+        { path: 'complaints', element: < UserComplain/> },
+        { path: 'analytics', element: < Analytics /> },
+        { path: 'reports', element: <Reports /> },
       ]
     },
-
-    // ADMIN ROUTES
     {
       path: '/admin-dashboard',
-      element:
-       isAdmin ? <AdminDashboard /> : <Login />,
-       children: [
-        {
-          path: 'manage-users',
-          element: <Users />
-        },
-        {
-          path: 'reports',
-          element: <Reports />
-        },
-        {
-          path: 'view-results',
-          element: <ViewResults />
-        },
-        {
-          path: 'show-analytics',
-          element: <Analytics />
-        },
-        {
-          path: 'view-complains',
-          element: <Complains />
-        },
-
-       ]
+      element: isAdmin ? <AdminDashboard /> : <Login />,
+      children: [
+        { path: 'manage-users', element: <Users /> },
+        { path: 'reports', element: <Reports /> },
+        { path: 'view-results', element: <ViewResults /> },
+        { path: 'show-analytics', element: <Analytics /> },
+        { path: 'view-complains', element: <Complains /> },
+      ]
     },
     {
       path: '/officer-dashboard',
       element: isElectionOfficer ? <ElectionOfficerDashboard /> : <Login />,
       children: [
-        { path: 'candidate', 
-          element: <Candidate /> 
-        },
-        { path: 'election', 
-          element: <Elections /> 
-        },
-        { path: 'positions', 
-          element: <Positions /> 
-        },
-        { path: 'viewResults', 
-          element: <Analytics /> 
-        },
-        {
-          path: 'reports',
-          element: <Reports />
-        },
-        {
-          path: 'view-results',
-          element: <ViewResults />
-        },
-        {
-          path: 'show-analytics',
-          element: <Analytics />
-        },
-        {
-          path: 'view-complains',
-          element: <Complains />
-        },
+        { path: 'candidate', element: <Candidate /> },
+        { path: 'election', element: <Elections /> },
+        { path: 'positions', element: <Positions /> },
+        { path: 'viewResults', element: <Analytics /> },
+        { path: 'reports', element: <Reports /> },
+        { path: 'view-results', element: <ViewResults /> },
+        { path: 'show-analytics', element: <Analytics /> },
+        { path: 'view-complains', element: <Complains /> },
       ]
     },
-    
     {
       path: "*",
       element: <Error />,
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Chatbot />
+    </>
+  );
 }
 
 export default App;

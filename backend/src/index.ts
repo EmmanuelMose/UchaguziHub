@@ -1,5 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
+
 import authRouter from "./auth/auth.router";
 import systemUsersRouter from "./SystemUsers/systemUsers.router";
 import usersRouter from "./Users/users.router";
@@ -7,8 +11,9 @@ import electionsRouter from "./Elections/elections.router";
 import positionsRouter from "./Positions/positions.router";
 import candidatesRouter from "./Candidates/candidates.router";
 import votesRouter from "./Votes/votes.router";
-import  {ComplainRouter}  from "./complains/complains.router";
+import { ComplainRouter } from "./complains/complains.router";
 import electionResultsRouter from "./electionResults/electionResults.router";
+import chatbotRouter from "./chatbot/chatbot.router";
 
 const initializeApp = () => {
   const app = express();
@@ -30,7 +35,6 @@ const initializeApp = () => {
         }
       },
       credentials: true,
-      methods: ["GET", "POST", "PUT", "DELETE"],
     })
   );
 
@@ -47,8 +51,7 @@ const initializeApp = () => {
   app.use("/api/votes", votesRouter);
   app.use("/complaints", ComplainRouter);
   app.use("/api/election-results", electionResultsRouter);
-
-
+  app.use("/api/chat", chatbotRouter);
 
   return app;
 };
